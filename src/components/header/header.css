@@ -1,0 +1,29 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
+  padding-left: 40px;
+  padding-right: 40px;
+  border-radius: 30px;
+  background-color: var(--primary-color);
+}
+
+.logo {
+  aspect-ratio: 1 / 1;
+  height: 4vw;
+}
+
+.hamburger {
+  mix-blend-mode: multiply;
+}
+
+h1 {
+  color: var(--text-color);
+  text-shadow: 
+    3px 3px 20px var(--accent-color),
+    -2px 1px 30px var(--accent-color),
+    -5px 5px 40px var(--accent-color);
+  font-size: 4vw;
+}
