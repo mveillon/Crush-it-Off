@@ -1,7 +1,7 @@
 import React from "react";
 
-import logo from "../../assets/logo.png"
-import hamburger from "../../assets/hamburger-button.jpg"
+import logo from "../../assets/logo.png";
+import hamburger from "../../assets/hamburger-button.jpg";
 
 import "../../global.css"
 import "./header.css"

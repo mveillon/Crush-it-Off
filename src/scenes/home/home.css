@@ -1,0 +1,5 @@
+.home {
+  display: flex;
+  flex-direction: space-between;
+  align-items: center;
+}
