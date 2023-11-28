@@ -3,10 +3,12 @@ import React, { useEffect, useMemo, useState} from "react";
 import Header from "../../components/Header/Header";
 import { useLocation, useNavigate } from "react-router-dom";
 import { firebaseDB } from "../../firebase/init";
-import { get, ref, set } from "firebase/database"
+import { getDoc, setDoc, doc } from "firebase/firestore";
 import { any } from "../../utils/numJS";
 import "../../global.css";
 import "./edit-profile.css"
+import { USERS, userT } from "../../firebase/dbStructure";
+import genericConverter from "../../firebase/genericConverter";
 
 function EditProfile() {
   const location = useLocation()
@@ -16,7 +18,7 @@ function EditProfile() {
 
   const [user, setUser] = useState({
     name: "",
-    gender: "",
+    gender: "Male",
     preferences: [false, false, false]
   })
 
@@ -24,7 +26,7 @@ function EditProfile() {
   const userRef = useMemo(() => {
     const db = firebaseDB()
     const uid = localStorage.getItem("userID")
-    return ref(db, `users/${uid}`)
+    return doc(db, `${USERS}/${uid}`).withConverter(genericConverter<userT>())
   }, [])
 
   const changeName = (name: string) => {
@@ -55,9 +57,9 @@ function EditProfile() {
   }
 
   useEffect(() => {
-    get(userRef).then(snapshot => {
+    getDoc(userRef).then(snapshot => {
       if (snapshot.exists()) {
-        const data = snapshot.val()
+        const data = snapshot.data()
         setUser({
           name: data.name,
           gender: data.gender,
@@ -76,7 +78,7 @@ function EditProfile() {
     )
 
     if (valid) {
-      set(userRef, user)
+      setDoc(userRef, user)
       navigate(redirectBack)
     } else {
       setInvalidInput(true)

@@ -6,8 +6,9 @@ import {
   signInWithRedirect
 } from "firebase/auth";
 import { firebaseDB } from "./init";
-import { get, ref } from "firebase/database";
+import { getDoc, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { USERS } from "./dbStructure";
 
 /**
  * Checks that the user is logged in. If they are, saves their uid to
@@ -25,7 +26,7 @@ function CheckLoggedIn(props: { redirectBack: string }) {
         localStorage.setItem("userID", user.uid)
   
         const db = firebaseDB()
-        get(ref(db, `users/${user.uid}`)).then(snapshot => {
+        getDoc(doc(db, USERS, user.uid)).then(snapshot => {
           if (snapshot.exists()) {
             // user is already in Firebase so we're chilling
           } else {
@@ -35,6 +36,7 @@ function CheckLoggedIn(props: { redirectBack: string }) {
             )
           }
         })
+        
       } else {
         const auth = getAuth()
         const provider = new GoogleAuthProvider()

@@ -1,23 +1,44 @@
 import React from "react";
 
 import { firebaseDB } from "../../firebase/init";
-import { ref, push, set, get } from "firebase/database"
+
+import { doc, getDoc, setDoc } from "firebase/firestore"
 import "../../global.css"
 import "./new-lobby.css"
+import { useNavigate } from "react-router-dom";
+import { LOBBIES, NUM_LOBBIES, numLobbiesT } from "../../firebase/dbStructure";
+import genericConverter from "../../firebase/genericConverter";
 
 function NewLobby() {
+  const navigate = useNavigate()
   const createLobby = () => {
     const db = firebaseDB()
-    const numLobbiesRef = ref(db, "numLobbies")
 
-    get(numLobbiesRef).then(snapshot => {
+    const nlDoc = (
+      doc(db, NUM_LOBBIES, NUM_LOBBIES).withConverter(genericConverter<numLobbiesT>())
+    )
+    getDoc(nlDoc)
+      .then(snapshot => {
       if (snapshot.exists()) {
-        const numLobbies = snapshot.val()
-        push(ref(db, "lobbies/"), {"lobbyID": numLobbies})
+        const numLobbies = snapshot.data().n
+        setDoc(
+          doc(db, LOBBIES, `${numLobbies}`), 
+          {
+            "users": [{
+              "uid": localStorage.getItem("userID"),
+              "crushes": []
+            }]
+          }
+        )
 
-        set(numLobbiesRef, numLobbies + 1)
+        setDoc(nlDoc, {"n": numLobbies + 1})
+
+        navigate(
+          "/lobby",
+          { state: { lobbyID: numLobbies } }
+        )
       } else {
-        throw new Error("numLobbies data has disappeared!")
+        throw new Error("numLobbies data not found!")
       }
     })
   }
