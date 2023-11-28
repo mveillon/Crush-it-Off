@@ -15,7 +15,7 @@ type firebaseDB = {
   "users": {
     "name": string,
     "gender": string,
-    "preference": string[]
+    "preferences": boolean[] // male, female, non-binary
   }[]
 }
 

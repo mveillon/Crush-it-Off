@@ -5,14 +5,14 @@ class Person {
   lobbyID: number
   name: string
   identity: Gender
-  preference: Gender[]
+  preference: boolean[] // male, female, non-binary
 
   constructor(
     id: number, 
     lobbyID: number,
     name: string, 
     identity: Gender, 
-    preference: Gender[]
+    preference: boolean[]
   ) {
     this.id = id
     this.lobbyID = lobbyID
