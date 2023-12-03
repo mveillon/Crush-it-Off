@@ -32,7 +32,6 @@ function NewLobby() {
         setDoc(
           doc(db, LOBBIES, `${numLobbies}`, "users", getUserID()),
           {
-            uid: getUserID(),
             submitted: false,
             crushes: []
           }

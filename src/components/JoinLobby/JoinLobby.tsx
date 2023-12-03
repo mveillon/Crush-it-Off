@@ -34,7 +34,6 @@ function JoinLobby() {
           )
 
           setDoc(newUserPath, {
-            uid: userID,
             submitted: false,
             crushes: []
           })
@@ -43,7 +42,7 @@ function JoinLobby() {
             "/lobby",
             { state: { lobbyID: intCode } }
           )
-          
+
         } else {
           setInvalidInput(true)
         }

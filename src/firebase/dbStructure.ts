@@ -1,9 +1,8 @@
 // this is the structure of the Firebase database
 
 export type userLink = {
-  "uid": string, // should correspond to a user in users
   "submitted": boolean,
-  "crushes": string[]
+  "crushes": string[] // ids should correspond to ids in users collection
 }
 
 export type lobbyT = {
@@ -26,6 +25,11 @@ export type numLobbiesT = {
 export const NUM_LOBBIES = "numLobbies"
 export const LOBBIES = "lobbies"
 export const USERS = "users"
+export const GENDER_MAP: { [index: string]: number } = {
+  "Male": 0,
+  "Female": 1,
+  "Non-Binary": 2
+}
 
 export type firebaseDB = {
   [NUM_LOBBIES]: { "numLobbies": numLobbiesT }
