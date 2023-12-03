@@ -28,12 +28,13 @@ function JoinLobby() {
 
       getDoc(lobbyRef).then(snapshot => {
         if (snapshot.exists()) {
+          const userID = getUserID()
           const newUserPath = (
-            doc(db, LOBBIES, code, "users", getUserID())
+            doc(db, LOBBIES, code, "users", userID)
           )
 
           setDoc(newUserPath, {
-            uid: getUserID(),
+            uid: userID,
             submitted: false,
             crushes: []
           })
@@ -42,6 +43,7 @@ function JoinLobby() {
             "/lobby",
             { state: { lobbyID: intCode } }
           )
+          
         } else {
           setInvalidInput(true)
         }

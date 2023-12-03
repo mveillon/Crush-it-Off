@@ -1,4 +1,3 @@
-
 /**
  * Gets the user's ID from local storage, and errors if the user is not
  * authenticated

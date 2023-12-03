@@ -31,18 +31,45 @@ function Lobby() {
 
   const db = firebaseDB()
 
-  const [lobbyMembers, setLobbyMembers] = useState<{
-    uid: string,
-    name: string,
-    checked: boolean
-  }[]>([])
+  type member = { uid: string, name: string, checked: boolean }
+  const [lobbyMembers, setLobbyMembers] = useState<member[]>([])
+
+  const changeSwitch = (
+    change: DocumentChange<userLink, userLink>, 
+    toAdd: member
+  ) => {
+    switch(change.type) {
+      case "added":
+        setLobbyMembers([...lobbyMembers, toAdd])
+        break;
+
+      case "modified":
+        for (let i = 0; i < lobbyMembers.length; i++) {
+          if (lobbyMembers[i].uid === toAdd.uid) {
+            lobbyMembers[i] = toAdd
+            setLobbyMembers(lobbyMembers)
+            break;
+          }
+        }
+        break;
+
+      case "removed":
+        setLobbyMembers(
+          lobbyMembers.filter(mem => mem.uid != toAdd.uid)
+        )
+        break;
+
+      default:
+        throw new Error(`Unsupported change type: ${change.type}`)
+    }
+  }
 
   const handleChange = (change: DocumentChange<userLink, userLink>) => {
-    console.log(change.doc.data())
     const memberID = change.doc.data().uid
     const memDoc = (
       doc(db, USERS, memberID).withConverter(genericConverter<userT>())
     )
+    
     getDoc(memDoc).then(newMember => {
       if (newMember.exists()) {
         const memberData = newMember.data()
@@ -52,29 +79,7 @@ function Lobby() {
           checked: false
         }
 
-        switch(change.type) {
-          case "added":
-            setLobbyMembers([...lobbyMembers, toAdd])
-            break;
-
-          case "modified":
-            for (let i = 0; i < lobbyMembers.length; i++) {
-              if (lobbyMembers[i].uid === toAdd.uid) {
-                lobbyMembers[i] = toAdd
-                setLobbyMembers(lobbyMembers)
-                break;
-              }
-            }
-            break;
-
-          case "removed":
-            setLobbyMembers(
-              lobbyMembers.filter(mem => mem.uid != toAdd.uid)
-            )
-            break;
-          default:
-            throw new Error(`Unsupported change type: ${change.type}`)
-        }
+        changeSwitch(change, toAdd)        
       }
     })
   }

@@ -16,12 +16,19 @@ function NewLobby() {
     const db = firebaseDB()
 
     const nlDoc = (
-      doc(db, NUM_LOBBIES, NUM_LOBBIES).withConverter(genericConverter<numLobbiesT>())
+      doc(db, NUM_LOBBIES, NUM_LOBBIES)
+        .withConverter(genericConverter<numLobbiesT>())
     )
     getDoc(nlDoc)
       .then(snapshot => {
       if (snapshot.exists()) {
         const numLobbies = snapshot.data().n
+
+        setDoc(
+          doc(db, LOBBIES, `${numLobbies}`),
+          { "users": {} }
+        )
+
         setDoc(
           doc(db, LOBBIES, `${numLobbies}`, "users", getUserID()),
           {
