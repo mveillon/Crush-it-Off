@@ -9,12 +9,14 @@ import "../../global.css";
 import "./edit-profile.css"
 import { USERS, userT } from "../../firebase/dbStructure";
 import genericConverter from "../../firebase/genericConverter";
+import getUserID from "../../firebase/getUserID";
 
 function EditProfile() {
   const location = useLocation()
   const {
-    redirectBack
-  } = location.state as { redirectBack: string }
+    redirectBack,
+    state
+  } = location.state as { redirectBack: string, state?: any }
 
   const [user, setUser] = useState({
     name: "",
@@ -25,7 +27,7 @@ function EditProfile() {
   const [invalidInput, setInvalidInput] = useState(false)
   const userRef = useMemo(() => {
     const db = firebaseDB()
-    const uid = localStorage.getItem("userID")
+    const uid = getUserID()
     return doc(db, `${USERS}/${uid}`).withConverter(genericConverter<userT>())
   }, [])
 
@@ -79,7 +81,10 @@ function EditProfile() {
 
     if (valid) {
       setDoc(userRef, user)
-      navigate(redirectBack)
+      navigate(
+        redirectBack,
+        { state: state }
+      )
     } else {
       setInvalidInput(true)
     }

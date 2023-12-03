@@ -8,6 +8,7 @@ import "./new-lobby.css"
 import { useNavigate } from "react-router-dom";
 import { LOBBIES, NUM_LOBBIES, numLobbiesT } from "../../firebase/dbStructure";
 import genericConverter from "../../firebase/genericConverter";
+import getUserID from "../../firebase/getUserID";
 
 function NewLobby() {
   const navigate = useNavigate()
@@ -22,12 +23,11 @@ function NewLobby() {
       if (snapshot.exists()) {
         const numLobbies = snapshot.data().n
         setDoc(
-          doc(db, LOBBIES, `${numLobbies}`), 
+          doc(db, LOBBIES, `${numLobbies}`, "users", getUserID()),
           {
-            "users": [{
-              "uid": localStorage.getItem("userID"),
-              "crushes": []
-            }]
+            uid: getUserID(),
+            submitted: false,
+            crushes: []
           }
         )
 

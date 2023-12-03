@@ -6,9 +6,10 @@ import {
   signInWithRedirect
 } from "firebase/auth";
 import { firebaseDB } from "./init";
-import { getDoc, doc } from "firebase/firestore";
+import { getDoc, doc, collection, query, where, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { USERS } from "./dbStructure";
+import { USERS, userT } from "./dbStructure";
+import genericConverter from "./genericConverter";
 
 /**
  * Checks that the user is logged in. If they are, saves their uid to
@@ -16,7 +17,10 @@ import { USERS } from "./dbStructure";
  * back to whatever page they were before
  * @param redirectBack where to send the user after they log in
  */
-function CheckLoggedIn(props: { redirectBack: string }) {
+function CheckLoggedIn(props: { 
+  redirectBack: string,
+  state?: any
+}) {
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -30,10 +34,23 @@ function CheckLoggedIn(props: { redirectBack: string }) {
           if (snapshot.exists()) {
             // user is already in Firebase so we're chilling
           } else {
-            navigate(
-              "/create-profile",
-              { state: { redirectBack: props.redirectBack } }
+            // need to check if any users in the DB have the same email
+            const userColl = (
+              collection(db, USERS).withConverter(genericConverter<userT>())
             )
+
+            const sameEmailQ = query(userColl, where("email", "==", user.email))
+            getDocs(sameEmailQ).then(sameEmailSnap => {
+              const users = sameEmailSnap.docs
+              if (users.length > 0) {
+                localStorage.setItem("userID", users[0].id)
+              } else {
+                navigate(
+                  "/edit-profile",
+                  { state: props }
+                )
+              }
+            })
           }
         })
         

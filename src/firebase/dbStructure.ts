@@ -1,18 +1,20 @@
 // this is the structure of the Firebase database
 
 export type userLink = {
-  "uid": string // should correspond to a user in users
+  "uid": string, // should correspond to a user in users
+  "submitted": boolean,
   "crushes": string[]
 }
 
 export type lobbyT = {
-  [index: number]: {
-    "users": userLink[]
+  "users": {
+    [index: string]: userLink
   }
 }
 
 export type userT = {
   "name": string,
+  "email": string,
   "gender": string,
   "preferences": boolean[]
 }
@@ -26,9 +28,9 @@ export const LOBBIES = "lobbies"
 export const USERS = "users"
 
 export type firebaseDB = {
-  [NUM_LOBBIES]: numLobbiesT
+  [NUM_LOBBIES]: { "numLobbies": numLobbiesT }
 
-  [LOBBIES]: lobbyT[]
+  [LOBBIES]: { [index: number]: lobbyT }
 
-  [USERS]: userT[]
+  [USERS]: { [index: string]: userT }
 }
