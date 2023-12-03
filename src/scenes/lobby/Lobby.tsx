@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import { firebaseDB } from "../../firebase/init";
 import { 
@@ -8,7 +8,8 @@ import {
   doc, 
   getDoc, 
   collection,
-  DocumentChange
+  DocumentChange,
+  setDoc
 } from "firebase/firestore";
 import { 
   LOBBIES, 
@@ -171,7 +172,30 @@ function Lobby() {
 
   const toggleChecked = (ind: number) => {
     lobbyMembers[ind].checked = !lobbyMembers[ind].checked
-    setLobbyMembers(lobbyMembers)
+    setLobbyMembers([...lobbyMembers])
+  }
+
+  const navigate = useNavigate()
+  const submitCrushes = () => {
+    const userMember = (
+      doc(
+        db,
+        LOBBIES,
+        `${lobbyID}`,
+        "users",
+        getUserID()
+      ).withConverter(genericConverter<userLink>())
+    )
+
+    setDoc(
+      userMember, 
+      {
+        submitted: true,
+        crushes: lobbyMembers.filter(mem => mem.checked).map(mem => mem.uid)
+      }
+    )
+
+    navigate("/matches")
   }
 
   return (
@@ -198,6 +222,9 @@ function Lobby() {
             })
           }
         </div>
+
+        <button onClick={submitCrushes}>Submit Crushes</button>
+
       </div>
     </div>
   )

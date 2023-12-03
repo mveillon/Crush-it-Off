@@ -6,8 +6,9 @@ import { firebaseDB } from "../../firebase/init";
 import "../../global.css"
 import "./join-lobby.css"
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { LOBBIES } from "../../firebase/dbStructure";
+import { LOBBIES, userLink } from "../../firebase/dbStructure";
 import getUserID from "../../firebase/getUserID";
+import genericConverter from "../../firebase/genericConverter";
 
 function JoinLobby() {
   const db = firebaseDB()
@@ -31,17 +32,24 @@ function JoinLobby() {
           const userID = getUserID()
           const newUserPath = (
             doc(db, LOBBIES, code, "users", userID)
+              .withConverter(genericConverter<userLink>())
           )
 
-          setDoc(newUserPath, {
-            submitted: false,
-            crushes: []
+          getDoc(newUserPath).then(userSnap => {
+            if (userSnap.exists() && userSnap.data().submitted) {
+              navigate("/matches")
+            } else {
+              setDoc(newUserPath, {
+                submitted: false,
+                crushes: []
+              })
+              
+              navigate(
+                "/lobby",
+                { state: { lobbyID: intCode } }
+              )
+            }
           })
-
-          navigate(
-            "/lobby",
-            { state: { lobbyID: intCode } }
-          )
 
         } else {
           setInvalidInput(true)
