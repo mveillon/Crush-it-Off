@@ -1,11 +1,13 @@
 import React from "react";
 
-import "../../global.css"
-import "./home.css"
 import CheckLoggedIn from "../../firebase/CheckLoggedIn";
 import Header from "../../components/Header/Header";
 import NewLobby from "../../components/NewLobby/NewLobby";
 import JoinLobby from "../../components/JoinLobby/JoinLobby";
+import EditProfileNav from "../../components/EditProfileNav/EditProfileNav";
+
+import "../../global.css"
+import "./home.css"
 
 function Home() {
   return (
@@ -17,6 +19,7 @@ function Home() {
         <div className='home'>
           <NewLobby />
           <JoinLobby />
+          <EditProfileNav />
         </div>
       </div>
     </div>

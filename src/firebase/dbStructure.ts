@@ -15,7 +15,8 @@ export type userT = {
   "name": string,
   "email": string,
   "gender": string,
-  "preferences": boolean[]
+  "preferences": boolean[],
+  "profile-pic": string
 }
 
 export type numLobbiesT = {
@@ -25,6 +26,7 @@ export type numLobbiesT = {
 export const NUM_LOBBIES = "numLobbies"
 export const LOBBIES = "lobbies"
 export const USERS = "users"
+export const PFPs = "pfps"
 export const GENDER_MAP: { [index: string]: number } = {
   "Male": 0,
   "Female": 1,

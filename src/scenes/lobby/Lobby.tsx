@@ -16,12 +16,14 @@ import {
   userLink, 
   USERS, 
   userT, 
-  GENDER_MAP 
+  GENDER_MAP, 
+  PFPs
 } from "../../firebase/dbStructure";
 import genericConverter from "../../firebase/genericConverter";
 import getUserID from "../../firebase/getUserID";
 import CheckLoggedIn from "../../firebase/CheckLoggedIn";
 import { Unsubscribe } from "firebase/auth";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 import "../../global.css"
 import "./lobby.css"
@@ -33,8 +35,14 @@ function Lobby() {
   } = location.state as { lobbyID: number }
 
   const db = firebaseDB()
+  const storage = getStorage()
 
-  type member = { uid: string, name: string, checked: boolean }
+  type member = { 
+    uid: string, 
+    name: string, 
+    checked: boolean,
+    pfp: string
+  }
   const [lobbyMembers, setLobbyMembers] = useState<member[]>([])
   const [userData, setUserData] = useState<userT | undefined>(undefined)
 
@@ -102,15 +110,19 @@ function Lobby() {
       if (newMember.exists()) {
         const memberData = newMember.data()
 
-        if (attracted(userData, memberData)) {
-          const toAdd = {
-            uid: memberID,
-            name: memberData.name,
-            checked: false
+        const pfpRef = ref(storage, `${PFPs}/${memberData["profile-pic"]}`)
+        getDownloadURL(pfpRef).then(url => {
+          if (attracted(userData, memberData)) {
+            const toAdd = {
+              uid: memberID,
+              name: memberData.name,
+              checked: false,
+              pfp: url
+            }
+    
+            changeSwitch(change, toAdd)
           }
-  
-          changeSwitch(change, toAdd) 
-        }    
+        })  
       }
     })
   }
@@ -214,13 +226,16 @@ function Lobby() {
           {
             lobbyMembers.map((member, i) => {
               return (
-                <label key={i}>{member.name}
-                  <input
-                    type="checkbox"
-                    checked={member.checked}
-                    onChange={(e) => toggleChecked(i)}
-                  />
-                </label>
+                <div>
+                  <label key={i}>{member.name}
+                    <input
+                      type="checkbox"
+                      checked={member.checked}
+                      onChange={(e) => toggleChecked(i)}
+                    />
+                  </label>
+                  <img src={member.pfp} />
+                </div>
               )
             })
           }
