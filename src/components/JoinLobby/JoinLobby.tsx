@@ -37,7 +37,10 @@ function JoinLobby() {
 
           getDoc(newUserPath).then(userSnap => {
             if (userSnap.exists() && userSnap.data().submitted) {
-              navigate("/matches")
+              navigate(
+                "/waiting-room",
+                { state: { lobbyID: intCode } }
+              )
             } else {
               setDoc(newUserPath, {
                 submitted: false,

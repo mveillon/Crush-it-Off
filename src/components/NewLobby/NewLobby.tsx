@@ -26,7 +26,7 @@ function NewLobby() {
 
         setDoc(
           doc(db, LOBBIES, `${numLobbies}`),
-          { "users": {} }
+          {}
         )
 
         setDoc(

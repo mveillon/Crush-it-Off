@@ -195,7 +195,10 @@ function Lobby() {
       }
     )
 
-    navigate("/matches")
+    navigate(
+      "/waiting-room",
+      { state: { lobbyID: lobbyID } }
+    )
   }
 
   return (

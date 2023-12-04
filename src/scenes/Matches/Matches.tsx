@@ -1,7 +1,8 @@
-import React from "react";
+import React from "react"
 
-import Header from "../../components/Header/Header";
-import CheckLoggedIn from "../../firebase/CheckLoggedIn";
+import Header from "../../components/Header/Header"
+import CheckLoggedIn from "../../firebase/CheckLoggedIn"
+
 import "./matches.css"
 import "../../global.css"
 
