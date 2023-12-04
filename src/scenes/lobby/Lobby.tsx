@@ -141,9 +141,9 @@ function Lobby() {
     )
 
     const unsub = onSnapshot(memberRef, memberSnapshot => {
-      memberSnapshot.docChanges().forEach(change => {
+      for (const change of memberSnapshot.docChanges()) {
         handleChange(userData, change)
-      })
+      }
     })
 
     return unsub

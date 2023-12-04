@@ -35,6 +35,13 @@ function WaitingRoom() {
 
   const navigate = useNavigate()
 
+  const goToMatches = () => {
+    navigate(
+      "/matches",
+      { state: { lobbyID: lobbyID } }
+    )
+  }
+
   const changeSwitch = (change: DocumentChange, toAdd: member) => {
     switch(change.type) {
       case "added":
@@ -69,12 +76,9 @@ function WaitingRoom() {
         } // intentionally not breaking in else case
 
       case "removed":
-        const newList = notSubmitted.filter(mem => mem.uid != toAdd.uid)
+        const newList = notSubmitted.filter(mem => mem.uid !== toAdd.uid)
         if (newList.length === 0) {
-          navigate(
-            "/matches",
-            { state: { lobbyID: lobbyID} }
-          )
+          goToMatches()
         } else {
           setNotSubmitted(
             newList
@@ -89,7 +93,11 @@ function WaitingRoom() {
 
   const createOnSnapshot = (lobbyQ: Query<userLink, userLink>): Unsubscribe => {
     return onSnapshot(lobbyQ, (memberSnapshot => {
-      memberSnapshot.docChanges().forEach(change => {
+      if (memberSnapshot.empty) {
+        goToMatches()
+      }
+      
+      for (const change of memberSnapshot.docChanges()) {
         const memberID = change.doc.id
         const memDoc = (
           doc(db, USERS, memberID).withConverter(genericConverter<userT>())
@@ -108,7 +116,7 @@ function WaitingRoom() {
             throw new Error(`Unrecognized user ID ${memberID} in lobby ${lobbyID}`)
           }
         })
-      })
+      }
     }))
   }
 

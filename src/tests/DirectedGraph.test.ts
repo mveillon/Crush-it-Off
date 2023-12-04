@@ -14,20 +14,21 @@ test("graph", () => {
     [ 1,  0],
     [ 0,  1]
   ]
-  invalidInds.forEach(inds => {
+  for (const inds of invalidInds) {
     expect(() => graph.hasEdge(...inds)).toThrow()
     expect(() => graph.addEdge(...inds)).toThrow()
     expect(() => graph.removeEdge(...inds)).toThrow()
-  })
+  }
   
   expect(graph.numVertices).toBe(1)
   expect(graph.hasEdge(0, 0)).toBeFalsy()
   graph.addEdge(0, 0)
   expect(graph.hasEdge(0, 0)).toBeTruthy()
 
-  invalidInds.forEach(inds => {
+  for (const inds of invalidInds) {
     expect(() => graph.removeEdge(...inds)).toThrow()
-  })
+
+  }
 
   graph.addVertex()
   expect(graph.numVertices).toBe(2)
