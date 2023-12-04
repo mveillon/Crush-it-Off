@@ -156,9 +156,9 @@ function WaitingRoom() {
       <Header />
 
       <div className="content">
-        <h2>Waiting for submissions from:</h2>
+        <h1 className="title">Waiting for submissions from:</h1>
 
-        <div className="names">
+        <div className="waiting-names">
           {
             notSubmitted.map((member, i) => {
               return (

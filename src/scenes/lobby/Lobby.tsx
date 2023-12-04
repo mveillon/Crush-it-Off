@@ -30,6 +30,7 @@ import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 import "../../global.css"
 import "./lobby.css"
+import MemberCard from "../../components/MemberCard/MemberCard";
 
 function Lobby() {
   const location = useLocation()
@@ -252,30 +253,28 @@ function Lobby() {
       <Header />
 
       <div className="content">
-        <h2>{`Enter code ${lobbyID} to join lobby!`}</h2>
+        <h1 className="title">{`Enter code ${lobbyID} to join lobby!`}</h1>
         
-        <h3>Check off the names you would go on a date with: </h3>
-        <div className="names">
-          {
-            lobbyMembers.map((member, i) => {
-              return (
-                <div key={i}>
-                  <label>{member.name}
-                    <input
-                      type="checkbox"
-                      checked={member.checked}
-                      onChange={(e) => toggleChecked(i)}
-                    />
-                  </label>
-                  <img src={member.pfp} />
-                </div>
-              )
-            })
-          }
+        <div className="lobby">
+          <h2>Check off the names you would go on a date with: </h2>
+          <div className="names">
+            {
+              lobbyMembers.map((member, i) => {
+                return (
+                  <MemberCard
+                    name={member.name}
+                    pfpUrl={member.pfp}
+                    checked={member.checked}
+                    onCheck={() => toggleChecked(i)}
+                    key={i}
+                  />
+                )
+              })
+            }
+          </div>
+
+          <button onClick={submitCrushes}>Submit Crushes</button>
         </div>
-
-        <button onClick={submitCrushes}>Submit Crushes</button>
-
       </div>
     </div>
   )

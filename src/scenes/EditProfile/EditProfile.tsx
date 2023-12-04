@@ -9,7 +9,7 @@ import { any } from "../../utils/numJS";
 import { USERS, userT, PFPs } from "../../firebase/dbStructure";
 import genericConverter from "../../firebase/genericConverter";
 import getUserID from "../../firebase/getUserID";
-import Resizer from "react-image-file-resizer"
+import Resizer from "react-image-file-resizer";
 
 import "./edit-profile.css";
 import "../../global.css";

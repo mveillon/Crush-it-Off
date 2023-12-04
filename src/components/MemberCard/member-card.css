@@ -1,0 +1,41 @@
+.member-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-bottom: 5vh;
+  margin-top: 5vh;
+  border: 2px solid var(--text-color);
+  border-radius: 5vw;
+  padding-top: 3vh;
+  padding-bottom: 3vh;
+  background-color: var(--translucent-red);
+}
+
+.lobby-pfp {
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background-color: var(--text-color);
+}
+
+@media (max-width: 800px) {
+  .lobby-pfp {
+    width: 20vw;
+    border-radius: 10vw;
+  }
+
+  .member-card {
+    max-width: 75vw;
+  }
+}
+
+@media (min-width: 801px) {
+  .lobby-pfp {
+    width: 10vw;
+    border-radius: 5vw;
+  }
+
+  .member-card {
+    max-width: 50vw;
+  }
+}
