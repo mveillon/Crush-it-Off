@@ -9,7 +9,10 @@ import {
   getDoc, 
   collection,
   DocumentChange,
-  setDoc
+  setDoc,
+  query,
+  where,
+  documentId
 } from "firebase/firestore";
 import { 
   LOBBIES, 
@@ -27,6 +30,7 @@ import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 import "../../global.css"
 import "./lobby.css"
+import { url } from "inspector";
 
 function Lobby() {
   const location = useLocation()
@@ -128,16 +132,6 @@ function Lobby() {
   }
 
   const createOnSnapshot = (): Unsubscribe => {
-    // TODO : also need to listen to changes to users collection
-    // in case someone edits their profile after joining a lobby,
-    // but we want to somehow query the onSnapshot to only listen
-    // to users who are in the lobby to limit reads. Problem is, 
-    // we have to set up the query in the useEffect before we have
-    // the full list of members of the lobby so this might not be
-    // possible. One option is to have lobbyMembers be a dependency,
-    // but we have to be careful to always unsubscribe before creating
-    // a new onSnapshot. Also look into having multiple useEffects for
-    // simplicity and organization
     if (typeof userData === 'undefined') {
       // should never happen
       throw new Error('userData is undefined')
@@ -161,6 +155,39 @@ function Lobby() {
     return unsub
   }
 
+  const userChangesSnapshot = (): Unsubscribe => {
+    const memberIDs = lobbyMembers.map(member => member.uid)
+    const allUsers = (
+      collection(
+        db,
+        USERS
+      ).withConverter(genericConverter<userT>())
+    )
+    const justMembersQ = (
+      query(allUsers, where(documentId(), "in", memberIDs))
+    )
+
+    return onSnapshot(justMembersQ, snapshot => {
+      for (const change of snapshot.docChanges()) {
+        if (change.type === "modified") {
+          const memberData = change.doc.data()
+          const pfpRef = ref(storage, `${PFPs}/${memberData["profile-pic"]}`)
+
+          getDownloadURL(pfpRef).then(url => {
+            const newMember: member = {
+              uid: change.doc.id,
+              name: memberData.name,
+              pfp: url,
+              checked: false
+            }
+  
+            changeSwitch(change, newMember)
+          })
+        }
+      }
+    })
+  }
+
   useEffect(() => {
     const userDoc = (
       doc(db, USERS, getUserID()).withConverter(genericConverter<userT>())
@@ -178,7 +205,16 @@ function Lobby() {
 
   useEffect(() => {
     if (typeof userData !== 'undefined') {
-      return createOnSnapshot()
+      const unsub = createOnSnapshot()
+      let unsub2 = () => {}
+      if (lobbyMembers.length > 0) {
+        unsub2 = userChangesSnapshot()
+      }
+      
+      return () => {
+        unsub()
+        unsub2()
+      }
     }
   }, [lobbyMembers, userData])
 
@@ -226,8 +262,8 @@ function Lobby() {
           {
             lobbyMembers.map((member, i) => {
               return (
-                <div>
-                  <label key={i}>{member.name}
+                <div key={i}>
+                  <label>{member.name}
                     <input
                       type="checkbox"
                       checked={member.checked}
