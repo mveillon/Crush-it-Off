@@ -1,7 +1,46 @@
 label {
   display: block;
+  margin-bottom: 2vh;
 }
 
-img {
+.pfp {
   object-fit: contain;
+  margin-bottom: 2vh;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 10vh;
+}
+
+.edit-profile {
+  margin-left: 5vw;
+}
+
+.pfp-input {
+  background-color: var(--translucent-red);
+}
+
+@media (max-width: 800px) {
+  .pfp-input {
+    max-width: 60vw;
+  }
+}
+
+@media (min-width: 801px) {
+  .pfp-input {
+    max-width: 30vw;
+  }
+}
+
+.prefs {
+  background-color: var(--translucent-red);
+  border-radius: 5vw;
+  padding: 2vw;
+  width: fit-content;
+}
+
+.gender-select {
+  margin-left: 1vw;
+
 }

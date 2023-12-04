@@ -11,8 +11,8 @@ import genericConverter from "../../firebase/genericConverter";
 import getUserID from "../../firebase/getUserID";
 import Resizer from "react-image-file-resizer"
 
-import "../../global.css";
 import "./edit-profile.css";
+import "../../global.css";
 
 function EditProfile() {
   const location = useLocation()
@@ -157,9 +157,11 @@ function EditProfile() {
       <Header />
 
       <div className="content">
-        <div className="edit-profile">
-          <h1>We just need to gather some information about you</h1>
+        <h1 className="title">
+          We just need to gather some information about you
+        </h1>
 
+        <div className="edit-profile">
           <form>
             <label>Enter your name:
               <input
@@ -174,12 +176,16 @@ function EditProfile() {
                 type="file"
                 accept="image/*"
                 onChange={uploadPFP}
+                className="pfp-input"
               />
             </label>
-            <img src={pfpURL} height={360} width={360} />
+            <img src={pfpURL} height={360} width={360} className="pfp" />
 
             <label>Select your gender identity:
-              <select onChange={(e) => changeGender(e.target.value)}>
+              <select 
+                onChange={(e) => changeGender(e.target.value)}
+                className="gender-select"
+              >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Non-Binary">Non-Binary</option>
@@ -188,7 +194,7 @@ function EditProfile() {
               </select>
             </label>
 
-            <label>Select your dating preferences:
+            <label className="prefs">Select your dating preferences:
               <label>Male
                 <input
                   type="checkbox"

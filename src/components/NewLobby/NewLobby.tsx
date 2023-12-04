@@ -51,7 +51,9 @@ function NewLobby() {
 
   return (
     <div>
-      <button onClick={createLobby}>Create New Lobby</button>
+      <button onClick={createLobby} className="new-lobby">
+        Create New Lobby
+      </button>
     </div>
   )
 }

@@ -64,7 +64,7 @@ function JoinLobby() {
   return (
     <div>
       <form onSubmit={goToLobby} className="join-lobby">
-        <label className="lobby-code">Lobby Code: 
+        <label>Lobby Code: 
           <input
             type="text"
             value={code}

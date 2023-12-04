@@ -15,7 +15,7 @@ function HamburgerDropdown(props: { style: {display: string }}) {
 
   return (
     <div className="dropdown" style={props.style}>
-      <button onClick={toEditProfile} className="edit-profile">
+      <button onClick={toEditProfile}>
         Edit Profile
       </button>
     </div>
