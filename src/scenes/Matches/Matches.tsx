@@ -11,6 +11,7 @@ import "../../global.css"
 import { doc, getDoc } from "firebase/firestore"
 import { LOBBIES, USERS, userLink, userT } from "../../firebase/dbStructure"
 import genericConverter from "../../firebase/genericConverter"
+import Match from "../../components/Match/Match"
 
 function Matches() {
   const location = useLocation()
@@ -100,20 +101,24 @@ function Matches() {
       <Header />
 
       <div className="content">
-        <h2>Your matches:</h2>
+        <h1 className="title">Your matches:</h1>
 
-        {
-          matches.map((name, i) => {
-            return (
-              <p key={i}>{name}</p>
-            )
-          })
-        }
+        <div className="matches">
+          {
+            matches.map((name, i) => {
+              return (
+                <Match name={name} key={i} />
+              )
+            })
+          }
 
-        {
-          doneQuerying &&
-          numMatches()
-        }
+          {
+            doneQuerying &&
+            <h2 className="num-matches">
+              {numMatches()}
+            </h2>
+          }
+        </div>
       </div>
     </div>
   )
