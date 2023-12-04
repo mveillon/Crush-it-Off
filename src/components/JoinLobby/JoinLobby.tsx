@@ -63,23 +63,23 @@ function JoinLobby() {
 
   return (
     <div>
-      <form onSubmit={goToLobby}>
-        <label>Code: 
+      <form onSubmit={goToLobby} className="join-lobby">
+        <label className="lobby-code">Lobby Code: 
           <input
             type="text"
             value={code}
             onChange={(e) => setCode(e.target.value)}
             autoFocus={true}
+            className="code-input"
           />
         </label>
 
-        <input type="submit" value="Join Lobby" />
+        <input type="submit" value="Join Lobby" className="submit-button" />
+        {
+          invalidInput &&
+          <p>Please input a valid code</p>
+        }
       </form>
-
-      {
-        invalidInput &&
-        <p>Please input a valid code</p>
-      }
     </div>
   )
 }

@@ -1,7 +1,48 @@
 :root {
-  --bg-color: #f4f0ca;
+  --bg-color: #ece4f1;
   --text-color: #2b444e;
   --primary-color: #e61056;
   --secondary-color: #d85e58;
   --accent-color: #48b39a;
+}
+
+/* we have weights 100, 400, 600, and 700 for Montserrat */
+body {
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-family: 'Ysabeau', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+button, input[type=submit]{
+  color: var(--text-color);
+  border: none;
+  padding: 1.75vw;
+  border-radius: 1.75vw;
+  background-color: rgba(72, 179, 54, 0.5);
+  font-weight: 600;
+  box-shadow: 0.5vw 0.5vw 0.5vw var(--text-color);
+}
+
+button:hover {
+  background-color: rgba(64, 155, 48, 0.5);
+}
+
+input {
+  color: var(--text-color);
+  margin-left: 0.5vw;
+  background-color: rgba(216, 94, 88, 0.25);
+}
+
+label {
+  color: var(--text-color);
+}
+
+option {
+  color: var(--text-color);
+}
+
+input[type=text] {
+  border-radius: 1vw;
+  border-color: var(--text-color);
 }

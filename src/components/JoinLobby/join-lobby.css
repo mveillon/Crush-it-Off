@@ -1,1 +1,18 @@
+.join-lobby {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
 
+.submit-button {
+  margin-top: 2vh;
+}
+
+.lobby-code {
+  font-weight: 600;
+}
+
+.code-input {
+  width: 7.5vw;
+}

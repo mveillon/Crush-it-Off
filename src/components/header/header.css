@@ -3,16 +3,17 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 20px;
-  padding-left: 40px;
-  padding-right: 40px;
-  border-radius: 30px;
+  margin: 2vw;
+  padding-left: 6vw;
+  padding-right: 6vw;
+  border-radius: 5vw;
   background-color: var(--primary-color);
 }
 
 .logo {
   aspect-ratio: 1 / 1;
-  height: 4vw;
+  height: 4.5vw;
+  border-radius: 1.5vw;
 }
 
 .hamburger {

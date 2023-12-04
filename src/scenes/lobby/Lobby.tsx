@@ -30,7 +30,6 @@ import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 import "../../global.css"
 import "./lobby.css"
-import { url } from "inspector";
 
 function Lobby() {
   const location = useLocation()
@@ -146,13 +145,11 @@ function Lobby() {
       ).withConverter(genericConverter<userLink>())
     )
 
-    const unsub = onSnapshot(memberRef, memberSnapshot => {
+    return onSnapshot(memberRef, memberSnapshot => {
       for (const change of memberSnapshot.docChanges()) {
         handleChange(userData, change)
       }
     })
-
-    return unsub
   }
 
   const userChangesSnapshot = (): Unsubscribe => {
@@ -198,7 +195,7 @@ function Lobby() {
         const userData = snapshot.data()
         setUserData(userData)
       } else {
-        throw new Error(`Invalid lobby id ${lobbyID}`)
+        throw new Error("Could not authenticate user")
       }
     }))
   }, [])

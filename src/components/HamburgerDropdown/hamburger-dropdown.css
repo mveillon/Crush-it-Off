@@ -1,0 +1,8 @@
+.dropdown {
+  background-color: var(--bg-color);
+  padding: 3vw;
+  right: 6vw;
+  position: absolute;
+  border-radius: 3vw;
+  border: 1px solid var(--text-color);
+}
