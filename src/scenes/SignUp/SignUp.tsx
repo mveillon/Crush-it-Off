@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { 
@@ -12,6 +12,8 @@ import "./sign-up.css";
 import "../../global.css";
 import Header from "../../components/Header/Header";
 
+declare const grecaptcha: any;
+
 function SignUp() {
   const location = useLocation()
 
@@ -24,6 +26,46 @@ function SignUp() {
   )
   const [verifyFailed, setVerifyFailed] = useState(false)
 
+  const [captcha, setCaptcha] = useState<RecaptchaVerifier>()
+  const [captchaID, setCaptchaID] = useState(NaN)
+
+  useEffect(() => {
+    let triedAlready = false
+    const renderCaptcha = async (): Promise<() => void> => {
+      try {
+        const auth = getAuth()
+        const c = new RecaptchaVerifier(auth, 'sign-in-button', {
+          size: 'invisible'
+        })
+
+        const cID = await c.render()
+        setCaptcha(c)
+        setCaptchaID(cID)
+        return () => {
+          c.clear()
+          grecaptcha.reset(cID)
+        }
+
+      } catch (e) {
+        if (!triedAlready) {
+          triedAlready = true
+
+          return new Promise((resolve, _) => {
+            setTimeout(() => {
+              resolve(renderCaptcha)
+            }, 2000)
+          })
+        } else {
+          throw e
+        }
+      }
+      
+    }
+    const callbackPromise = renderCaptcha()
+
+    return () => { callbackPromise.then(f => f()) }
+  }, [])
+
   // from https://ihateregex.io/expr/phone/
   // don't ask me to explain it jesus christ
   const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/gmi
@@ -35,10 +77,9 @@ function SignUp() {
       setInvalidNumber(true)
     } else {
       const auth = getAuth()
-      const captcha = new RecaptchaVerifier(auth, 'sign-in-button', {
-        size: 'invisible'
-      })
-      await captcha.render()
+      if (typeof captcha === "undefined") {
+        throw new Error('Failed to initialize captcha')
+      }
 
       signInWithPhoneNumber(auth, phone, captcha)
         .then(confirmation => {
@@ -46,6 +87,8 @@ function SignUp() {
         })
         .catch(error => {
           setInvalidNumber(true)
+          captcha.clear()
+          grecaptcha.reset()
           console.log(error)
         })
     }
@@ -68,7 +111,7 @@ function SignUp() {
       })
       .catch(_ => {
         setVerifyFailed(true)
-
+        grecaptcha.reset(captchaID)
       })
   }
 
@@ -98,6 +141,7 @@ function SignUp() {
               <button 
                 onClick={verifyNumber}
                 disabled={typeof confirmRes !== 'undefined'}
+                id="sign-in-button"
               >
                 Verify number
               </button>
@@ -122,7 +166,7 @@ function SignUp() {
 
               {
                 verifyFailed &&
-                <p>Could not verify code. Please refresh and try again.</p>
+                <p>Could not verify code. Please try again.</p>
               }
             </div>
           </div>
