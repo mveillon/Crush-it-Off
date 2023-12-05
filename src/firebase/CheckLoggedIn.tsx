@@ -47,7 +47,7 @@ function CheckLoggedIn(props: {
               } else {
                 navigate(
                   "/edit-profile",
-                  { state: props }
+                  { state: {...props, email: user.email} }
                 )
               }
             })

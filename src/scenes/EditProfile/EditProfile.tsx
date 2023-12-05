@@ -18,8 +18,13 @@ function EditProfile() {
   const location = useLocation()
   const {
     redirectBack,
+    email,
     state
-  } = location.state as { redirectBack: string, state?: any }
+  } = location.state as { 
+    redirectBack: string, 
+    email?: string, 
+    state?: any 
+  }
 
   const defaultPFP = "pfp-default.png"
 
@@ -148,6 +153,17 @@ function EditProfile() {
         getDownloadURL(pfpRef).then(url => {
           setPfpURL(url)
         })
+
+      } else {
+        const pfpRef = ref(storage, `${PFPs}/${user["profile-pic"]}`)
+        getDownloadURL(pfpRef).then(url => {
+          setPfpURL(url)
+        })
+
+        if (typeof email === 'undefined') {
+          throw new Error(`Email undefined for user ${userRef.id}`)
+        }
+        setUser({...user, email: email})
       }
     })
   }, [])

@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { FirebaseApp, initializeApp } from "firebase/app";
 import { Analytics, getAnalytics } from "firebase/analytics";
 import { getFirestore, Firestore } from "firebase/firestore"
 
@@ -11,6 +11,7 @@ import { getFirestore, Firestore } from "firebase/firestore"
 const firebaseConfig = {
   apiKey: "AIzaSyDWsmE1ga0FlZMYKYQTXkPUkFaUyFJQ7zA",
   authDomain: "crushers-b9b59.firebaseapp.com",
+  databaseURL: "https://crushers-b9b59-default-rtdb.firebaseio.com",
   projectId: "crushers-b9b59",
   storageBucket: "crushers-b9b59.appspot.com",
   messagingSenderId: "726054365204",
