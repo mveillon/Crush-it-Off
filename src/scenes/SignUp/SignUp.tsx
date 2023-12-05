@@ -2,13 +2,17 @@ import React, { useState } from "react";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
-import { createUserWithEmailAndPassword, getAuth  } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword  } from "firebase/auth";
 
 import "./sign-up.css";
 import "../../global.css";
 
 function SignUp() {
   const location = useLocation()
+  const {
+    redirectBack,
+    state
+  } = location.state as { redirectBack: string, state?: any }
 
   const [email, setEmail] = useState('')
   const [password1, setPassword1] = useState('')
@@ -37,6 +41,25 @@ function SignUp() {
     }
   }
 
+  const loginUser = () => {
+    const auth = getAuth()
+    signInWithEmailAndPassword(
+      auth,
+      email.toLowerCase(),
+      password1
+    ).then(credential => {
+      const user = credential.user
+      localStorage.setItem("userID", user.uid)
+      navigate(
+        redirectBack,
+        { state: state }
+      )
+    }).catch(error => {
+      setInvalid(true)
+      console.log(error.message)
+    })
+  }
+
   return (
     <div>
       <Header />
@@ -47,7 +70,7 @@ function SignUp() {
           <div className="email-input">
             <label>Enter your email: 
               <input 
-                type="text" 
+                type="email" 
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)}
                 className="email-box"
@@ -79,6 +102,35 @@ function SignUp() {
             {
               invalid &&
               <p>Passwords don't match!</p>
+            }
+          </div>
+
+          <div className="email-input">
+            <h2>Already have an account? Login:</h2>
+
+            <label>Enter your email:
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="email-box"
+              />
+            </label>
+
+            <label>Password:
+              <input
+                type="password"
+                value={password1}
+                onChange={(e) => setPassword1(e.target.value)}
+                className="email-box"
+              />
+            </label>
+
+            <button onClick={loginUser}>Login</button>
+
+            {
+              invalid &&
+              <p>Email and password do not match!</p>
             }
           </div>
         </div>
