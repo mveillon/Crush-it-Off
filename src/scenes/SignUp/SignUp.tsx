@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import { baseURL, firebaseDB } from "../../firebase/init";
-import { getAuth, sendSignInLinkToEmail } from "firebase/auth";
+import { getAuth, sendSignInLinkToEmail, signInWithEmailLink } from "firebase/auth";
+import { collection, doc } from "firebase/firestore";
+import { USERS } from "../../firebase/dbStructure";
 
 import "./sign-up.css";
 import "../../global.css";
-import { collection, doc } from "firebase/firestore";
-import { USERS } from "../../firebase/dbStructure";
 
 function SignUp() {
   const {
@@ -23,26 +23,31 @@ function SignUp() {
   const navigate = useNavigate()
   useEffect(() => {
     if (verified === '1') {
-      const db = firebaseDB()
-      const userDoc = doc(
-        collection(
-          db,
-          USERS
-        )
-      )
-
-      localStorage.setItem("userID", userDoc.id)
       const email = localStorage.getItem(emailCookie)
-      localStorage.removeItem(emailCookie)
-      navigate(
-        "/edit-profile",
-        { state: { redirectBack: redirectback, email } }
-      )
+      if (email === null) {
+        throw new Error('Cannot retrieve email from cookies!')
+      }
+      
+      const auth = getAuth()
+      signInWithEmailLink(auth, email, window.location.href).then(result => {
+        localStorage.removeItem(emailCookie)
+        localStorage.setItem("userID", result.user.uid)
+
+        navigate(
+          "/edit-profile",
+          { state: { redirectBack: redirectback, email } }
+        )
+      })
     }
   }, [])
 
   const verifyEmail = () => {
-    const url = `https://${baseURL()}/sign-up/${redirectback}/1`
+    let domain = `https://${baseURL()}`
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+      domain = 'http://localhost:3000'
+    }
+    
+    const url = `${domain}/sign-up/${redirectback}/1`
     console.log(url)
     const actionCodeSettings = {
       url: url,

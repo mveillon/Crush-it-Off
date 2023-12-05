@@ -4,9 +4,6 @@ import { Analytics, getAnalytics } from "firebase/analytics";
 import { getFirestore, Firestore } from "firebase/firestore"
 
 export const baseURL = (): string => {
-  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-    return "localhost:3000"
-  }
   return "crushers-b9b59.firebaseapp.com"
 }
 
