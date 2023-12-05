@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+
 import { 
   getAuth, 
   onAuthStateChanged
@@ -54,7 +55,8 @@ function CheckLoggedIn(props: {
 
       } else {
         navigate(
-          `/sign-up/${props.redirectBack}/0`
+          "/sign-up",
+          { state: props }
         )
       }
     })

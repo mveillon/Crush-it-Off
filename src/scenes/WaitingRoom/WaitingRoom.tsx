@@ -152,7 +152,7 @@ function WaitingRoom() {
 
   return (
     <div>
-      <CheckLoggedIn redirectBack="waiting-room" state={location.state} />
+      <CheckLoggedIn redirectBack="/waiting-room" state={location.state} />
       <Header />
 
       <div className="content">

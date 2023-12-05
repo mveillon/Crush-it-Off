@@ -5,13 +5,13 @@ import CheckLoggedIn from "../../firebase/CheckLoggedIn"
 import { useLocation } from "react-router-dom"
 import getUserID from "../../firebase/getUserID"
 import { firebaseDB } from "../../firebase/init"
-
-import "./matches.css"
-import "../../global.css"
 import { doc, getDoc } from "firebase/firestore"
 import { LOBBIES, USERS, userLink, userT } from "../../firebase/dbStructure"
 import genericConverter from "../../firebase/genericConverter"
 import Match from "../../components/Match/Match"
+
+import "./matches.css"
+import "../../global.css"
 
 function Matches() {
   const location = useLocation()
@@ -97,7 +97,7 @@ function Matches() {
 
   return (
     <div>
-      <CheckLoggedIn redirectBack="matches" />
+      <CheckLoggedIn redirectBack="/matches" />
       <Header />
 
       <div className="content">

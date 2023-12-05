@@ -1,14 +1,14 @@
 import React from "react";
 
 import { firebaseDB } from "../../firebase/init";
-
 import { doc, getDoc, setDoc } from "firebase/firestore"
-import "../../global.css"
-import "./new-lobby.css"
 import { useNavigate } from "react-router-dom";
 import { LOBBIES, NUM_LOBBIES, numLobbiesT } from "../../firebase/dbStructure";
 import genericConverter from "../../firebase/genericConverter";
 import getUserID from "../../firebase/getUserID";
+
+import "../../global.css"
+import "./new-lobby.css"
 
 function NewLobby() {
   const navigate = useNavigate()

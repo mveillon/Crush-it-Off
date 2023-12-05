@@ -2,13 +2,13 @@ import React, { FormEvent, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { firebaseDB } from "../../firebase/init";
-
-import "../../global.css"
-import "./join-lobby.css"
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { LOBBIES, userLink } from "../../firebase/dbStructure";
 import getUserID from "../../firebase/getUserID";
 import genericConverter from "../../firebase/genericConverter";
+
+import "../../global.css";
+import "./join-lobby.css";
 
 function JoinLobby() {
   const db = firebaseDB()

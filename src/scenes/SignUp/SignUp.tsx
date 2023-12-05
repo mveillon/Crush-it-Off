@@ -1,64 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
-import { baseURL, firebaseDB } from "../../firebase/init";
-import { getAuth, sendSignInLinkToEmail, signInWithEmailLink } from "firebase/auth";
-import { collection, doc } from "firebase/firestore";
-import { USERS } from "../../firebase/dbStructure";
+import { createUserWithEmailAndPassword, getAuth  } from "firebase/auth";
 
 import "./sign-up.css";
 import "../../global.css";
 
 function SignUp() {
-  const {
-    redirectback,
-    verified
-  } = useParams() as { redirectback: string, verified: string }
+  const location = useLocation()
 
   const [email, setEmail] = useState('')
-  const [emailSent, setEmailSent] = useState(false)
+  const [password1, setPassword1] = useState('')
+  const [password2, setPassword2] = useState('')
 
-  const emailCookie = "userEmail"
+  const [invalid, setInvalid] = useState(false)
+
   const navigate = useNavigate()
-  useEffect(() => {
-    if (verified === '1') {
-      const email = localStorage.getItem(emailCookie)
-      if (email === null) {
-        throw new Error('Cannot retrieve email from cookies!')
-      }
-      
+  const createUser = () => {
+    if (password1 !== password2) {
+      setInvalid(true)
+    } else {
       const auth = getAuth()
-      signInWithEmailLink(auth, email, window.location.href).then(result => {
-        localStorage.removeItem(emailCookie)
-        localStorage.setItem("userID", result.user.uid)
-
+      createUserWithEmailAndPassword(
+        auth, 
+        email.toLowerCase(), 
+        password1
+      ).then(credential => {
+        const user = credential.user
+        localStorage.setItem("userID", user.uid)
         navigate(
           "/edit-profile",
-          { state: { redirectBack: redirectback, email } }
+          { state: {...location.state, email: user.email} }
         )
       })
     }
-  }, [])
-
-  const verifyEmail = () => {
-    let domain = `https://${baseURL()}`
-    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-      domain = 'http://localhost:3000'
-    }
-    
-    const url = `${domain}/sign-up/${redirectback}/1`
-    console.log(url)
-    const actionCodeSettings = {
-      url: url,
-      handleCodeInApp: true
-    }
-
-    const auth = getAuth()
-    sendSignInLinkToEmail(auth, email, actionCodeSettings).then(() => {
-      localStorage.setItem(emailCookie, email)
-      setEmailSent(true)
-    })
   }
 
   return (
@@ -78,15 +54,31 @@ function SignUp() {
               />
             </label>
 
-            <button 
-              onClick={verifyEmail}
-            >
-              Verify email
+            <label>Enter your password:
+              <input
+                type="password"
+                value={password1}
+                onChange={(e) => setPassword1(e.target.value)}
+                className="email-box"
+              />
+            </label>
+
+            <label>Confirm password:
+              <input
+                type="password"
+                value={password2}
+                onChange={(e) => setPassword2(e.target.value)}
+                className="email-box"
+              />
+            </label>
+
+            <button onClick={createUser}>
+              Sign Up
             </button>
 
             {
-              emailSent &&
-              <p>Verification link sent. Check your email!</p>
+              invalid &&
+              <p>Passwords don't match!</p>
             }
           </div>
         </div>

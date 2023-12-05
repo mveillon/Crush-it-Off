@@ -131,7 +131,7 @@ function EditProfile() {
       } else {
         setDoc(userRef, user)
         navigate(
-          "/" + redirectBack
+          redirectBack
         )
       }
     } else {

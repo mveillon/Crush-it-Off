@@ -27,10 +27,10 @@ import getUserID from "../../firebase/getUserID";
 import CheckLoggedIn from "../../firebase/CheckLoggedIn";
 import { Unsubscribe } from "firebase/auth";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import MemberCard from "../../components/MemberCard/MemberCard";
 
 import "../../global.css"
 import "./lobby.css"
-import MemberCard from "../../components/MemberCard/MemberCard";
 
 function Lobby() {
   const location = useLocation()
@@ -249,7 +249,7 @@ function Lobby() {
 
   return (
     <div>
-      <CheckLoggedIn redirectBack="lobby" state={location.state} />
+      <CheckLoggedIn redirectBack="/lobby" state={location.state} />
       <Header />
 
       <div className="content">

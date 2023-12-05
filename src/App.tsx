@@ -24,7 +24,7 @@ function App() {
 
         <Route path="/matches" element={<Matches />} />
 
-        <Route path="/sign-up/:redirectback/:verified" element={<SignUp />} />
+        <Route path="/sign-up" element={<SignUp />} />
       </Routes>
     </BrowserRouter>
   )
