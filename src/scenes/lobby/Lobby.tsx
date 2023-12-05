@@ -249,7 +249,7 @@ function Lobby() {
 
   return (
     <div>
-      <CheckLoggedIn redirectBack="/lobby" state={location.state} />
+      <CheckLoggedIn redirectBack="lobby" state={location.state} />
       <Header />
 
       <div className="content">

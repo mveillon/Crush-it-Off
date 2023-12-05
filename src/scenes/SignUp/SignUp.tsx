@@ -1,118 +1,59 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { 
-  ConfirmationResult, 
-  RecaptchaVerifier, 
-  getAuth, 
-  signInWithPhoneNumber
-} from "firebase/auth";
+import Header from "../../components/Header/Header";
+import { baseURL, firebaseDB } from "../../firebase/init";
+import { getAuth, sendSignInLinkToEmail } from "firebase/auth";
 
 import "./sign-up.css";
 import "../../global.css";
-import Header from "../../components/Header/Header";
-
-declare const grecaptcha: any;
+import { collection, doc } from "firebase/firestore";
+import { USERS } from "../../firebase/dbStructure";
 
 function SignUp() {
-  const location = useLocation()
+  const {
+    redirectback,
+    verified
+  } = useParams() as { redirectback: string, verified: string }
 
-  const [phone, setPhone] = useState('')
-  const [invalidNumber, setInvalidNumber] = useState(false)
+  const [email, setEmail] = useState('')
+  const [emailSent, setEmailSent] = useState(false)
 
-  const [verifyNo, setVerifyNo] = useState('')
-  const [confirmRes, setConfirmRes] = (
-    useState<ConfirmationResult | undefined>(undefined)
-  )
-  const [verifyFailed, setVerifyFailed] = useState(false)
-
-  const [captcha, setCaptcha] = useState<RecaptchaVerifier>()
-  const [captchaID, setCaptchaID] = useState(NaN)
-
+  const emailCookie = "userEmail"
+  const navigate = useNavigate()
   useEffect(() => {
-    let triedAlready = false
-    const renderCaptcha = async (): Promise<() => void> => {
-      try {
-        const auth = getAuth()
-        const c = new RecaptchaVerifier(auth, 'sign-in-button', {
-          size: 'invisible'
-        })
+    if (verified === '1') {
+      const db = firebaseDB()
+      const userDoc = doc(
+        collection(
+          db,
+          USERS
+        )
+      )
 
-        const cID = await c.render()
-        setCaptcha(c)
-        setCaptchaID(cID)
-        return () => {
-          c.clear()
-          grecaptcha.reset(cID)
-        }
-
-      } catch (e) {
-        if (!triedAlready) {
-          triedAlready = true
-
-          return new Promise((resolve, _) => {
-            setTimeout(() => {
-              resolve(renderCaptcha)
-            }, 2000)
-          })
-        } else {
-          throw e
-        }
-      }
-      
+      localStorage.setItem("userID", userDoc.id)
+      const email = localStorage.getItem(emailCookie)
+      localStorage.removeItem(emailCookie)
+      navigate(
+        "/edit-profile",
+        { state: { redirectBack: redirectback, email } }
+      )
     }
-    const callbackPromise = renderCaptcha()
-
-    return () => { callbackPromise.then(f => f()) }
   }, [])
 
-  // from https://ihateregex.io/expr/phone/
-  // don't ask me to explain it jesus christ
-  const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/gmi
-
-  const navigate = useNavigate()
-
-  const verifyNumber = async () => {
-    if (!phoneRegex.test(phone)) {
-      setInvalidNumber(true)
-    } else {
-      const auth = getAuth()
-      if (typeof captcha === "undefined") {
-        throw new Error('Failed to initialize captcha')
-      }
-
-      signInWithPhoneNumber(auth, phone, captcha)
-        .then(confirmation => {
-          setConfirmRes(confirmation)
-        })
-        .catch(error => {
-          setInvalidNumber(true)
-          captcha.clear()
-          grecaptcha.reset()
-          console.log(error)
-        })
-    }
-  }
-
-  const submitVerificationCode = () => {
-    if (typeof confirmRes === 'undefined') {
-      throw new Error('Submitted verification code before allowed')
+  const verifyEmail = () => {
+    const url = `https://${baseURL()}/sign-up/${redirectback}/1`
+    console.log(url)
+    const actionCodeSettings = {
+      url: url,
+      handleCodeInApp: true
     }
 
-    confirmRes.confirm(verifyNo)
-      .then(result => {
-        const user = result.user
-        localStorage.setItem("userID", user.uid)
-
-        navigate(
-          "/edit-profile",
-          { state: {...location.state, phone: user.phoneNumber}}
-        )
-      })
-      .catch(_ => {
-        setVerifyFailed(true)
-        grecaptcha.reset(captchaID)
-      })
+    const auth = getAuth()
+    sendSignInLinkToEmail(auth, email, actionCodeSettings).then(() => {
+      localStorage.setItem(emailCookie, email)
+      setEmailSent(true)
+    })
   }
 
   return (
@@ -122,58 +63,27 @@ function SignUp() {
         <h1 className="title">Sign up to use Crushers</h1>
 
         <div className="sign-up">
-          <div className="numbers">
-            <div className="number-section">
-              <label>Enter your phone number: 
-                <input 
-                  type="text" 
-                  value={phone} 
-                  onChange={(e) => setPhone(e.target.value)}
-                  disabled={typeof confirmRes !== 'undefined'}
-                />
-              </label>
+          <div className="email-input">
+            <label>Enter your email: 
+              <input 
+                type="text" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)}
+                className="email-box"
+              />
+            </label>
 
-              {
-                invalidNumber &&
-                <p>Please input a valid phone number</p>
-              }
+            <button 
+              onClick={verifyEmail}
+            >
+              Verify email
+            </button>
 
-              <button 
-                onClick={verifyNumber}
-                disabled={typeof confirmRes !== 'undefined'}
-                id="sign-in-button"
-              >
-                Verify number
-              </button>
-            </div>
-            
-            <div className="number-section">
-              <label>Confirmation code: 
-                <input
-                  type="text"
-                  value={verifyNo}
-                  onChange={(e) => setVerifyNo(e.target.value)}
-                  disabled={typeof confirmRes === 'undefined'}
-                />
-              </label>
-
-              <button 
-                onClick={submitVerificationCode}
-                disabled={typeof confirmRes === 'undefined'}
-              >
-                Submit Code
-              </button>
-
-              {
-                verifyFailed &&
-                <p>Could not verify code. Please try again.</p>
-              }
-            </div>
+            {
+              emailSent &&
+              <p>Verification link sent. Check your email!</p>
+            }
           </div>
-
-          <p>
-            You may receive a verification message. Standard messaging rates will apply. I'm not a lawyer please don't sue me.
-          </p>
         </div>
       </div>
     </div>

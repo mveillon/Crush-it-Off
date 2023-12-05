@@ -18,12 +18,10 @@ function EditProfile() {
   const location = useLocation()
   const {
     redirectBack,
-    phone,
-    state
+    email
   } = location.state as { 
     redirectBack: string, 
-    phone?: string, 
-    state?: any 
+    email?: string, 
   }
 
   const defaultPFP = "pfp-default.png"
@@ -31,7 +29,7 @@ function EditProfile() {
   const [user, setUser] = useState<userT>({
     name: "",
     gender: "Male",
-    phone: "",
+    email: "",
     "profile-pic": defaultPFP,
     preferences: [false, false, false]
   })
@@ -125,8 +123,7 @@ function EditProfile() {
               uploadBytes(imgRef, blob as Blob).then(_ => {
                 setDoc(userRef, {...user, "profile-pic": fileName})
                 navigate(
-                  redirectBack,
-                  { state: state }
+                  redirectBack
                 )
               })
             })
@@ -134,8 +131,7 @@ function EditProfile() {
       } else {
         setDoc(userRef, user)
         navigate(
-          redirectBack,
-          { state: state }
+          "/" + redirectBack
         )
       }
     } else {
@@ -160,10 +156,10 @@ function EditProfile() {
           setPfpURL(url)
         })
 
-        if (typeof phone === 'undefined') {
-          throw new Error(`Phone undefined for user ${userRef.id}`)
+        if (typeof email === 'undefined') {
+          throw new Error(`Email undefined for user ${userRef.id}`)
         }
-        setUser({...user, phone: phone})
+        setUser({...user, email: email})
       }
     })
   }, [])

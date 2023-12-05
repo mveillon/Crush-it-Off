@@ -12,7 +12,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path={"/"} element={<Home />} />
+
+        <Route path={"/home"} element={<Home />} />
 
         <Route path="/edit-profile" element={<EditProfile />} />
 
@@ -22,7 +24,7 @@ function App() {
 
         <Route path="/matches" element={<Matches />} />
 
-        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/sign-up/:redirectback/:verified" element={<SignUp />} />
       </Routes>
     </BrowserRouter>
   )

@@ -37,15 +37,15 @@ function CheckLoggedIn(props: {
               collection(db, USERS).withConverter(genericConverter<userT>())
             )
 
-            const samePhoneQ = query(userColl, where("email", "==", user.phoneNumber))
-            getDocs(samePhoneQ).then(samePhoneSnap => {
-              const users = samePhoneSnap.docs
+            const sameEmailQ = query(userColl, where("email", "==", user.email))
+            getDocs(sameEmailQ).then(sameEmailSnap => {
+              const users = sameEmailSnap.docs
               if (users.length > 0) {
                 localStorage.setItem("userID", users[0].id)
               } else {
                 navigate(
                   "/edit-profile",
-                  { state: {...props, phoneNo: user.phoneNumber} }
+                  { state: {...props, email: user.email} }
                 )
               }
             })
@@ -54,8 +54,7 @@ function CheckLoggedIn(props: {
 
       } else {
         navigate(
-          "/sign-up",
-          { state: { props } }
+          `/sign-up/${props.redirectBack}/0`
         )
       }
     })

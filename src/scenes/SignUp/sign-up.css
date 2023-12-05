@@ -3,30 +3,21 @@
   margin-right: 10vw;
 }
 
-.number-section {
+.email-input {
   padding: 2vw;
   border: 1px solid var(--text-color);
   background-color: var(--translucent-red);
   border-radius: 5vw;
   margin-bottom: 10vh;
+  width: fit-content;
+  padding-left: 10vw;
+  padding-right: 10vw;
+  padding: 5vw 10vw 5vw 10vw;
 }
 
-.numbers {
-  display: flex;
-}
-
-@media (max-width: 800px) {
-  .numbers {
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-  }
-}
-
-@media (min-width: 801px) {
-  .numbers {
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-  }
+.email-box {
+  display: block;
+  min-width: 20vw;
+  margin-top: 3vh;
+  margin-bottom: 3vh;
 }

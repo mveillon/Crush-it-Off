@@ -11,7 +11,7 @@ import "./home.css"
 function Home() {
   return (
     <div>
-      <CheckLoggedIn redirectBack="/" />
+      <CheckLoggedIn redirectBack="home" />
       <Header />
 
       <div className='content'>

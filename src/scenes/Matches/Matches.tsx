@@ -97,7 +97,7 @@ function Matches() {
 
   return (
     <div>
-      <CheckLoggedIn redirectBack="/matches" />
+      <CheckLoggedIn redirectBack="matches" />
       <Header />
 
       <div className="content">
