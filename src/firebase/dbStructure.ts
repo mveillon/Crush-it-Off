@@ -13,7 +13,7 @@ export type lobbyT = {
 
 export type userT = {
   "name": string,
-  "email": string,
+  "phone": string,
   "gender": string,
   "preferences": boolean[],
   "profile-pic": string

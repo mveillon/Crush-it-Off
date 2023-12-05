@@ -6,6 +6,7 @@ import EditProfile from './scenes/EditProfile/EditProfile';
 import Lobby from './scenes/Lobby/Lobby';
 import Matches from './scenes/Matches/Matches';
 import WaitingRoom from './scenes/WaitingRoom/WaitingRoom';
+import SignUp from './scenes/SignUp/SignUp';
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
         <Route path="/waiting-room" element={<WaitingRoom />} />
 
         <Route path="/matches" element={<Matches />} />
+
+        <Route path="/sign-up" element={<SignUp />} />
       </Routes>
     </BrowserRouter>
   )

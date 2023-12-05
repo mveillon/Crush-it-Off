@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import { 
   getAuth, 
-  onAuthStateChanged, 
-  GoogleAuthProvider, 
-  signInWithRedirect
+  onAuthStateChanged
 } from "firebase/auth";
 import { firebaseDB } from "./init";
 import { getDoc, doc, collection, query, where, getDocs } from "firebase/firestore";
@@ -34,30 +32,31 @@ function CheckLoggedIn(props: {
           if (snapshot.exists()) {
             // user is already in Firebase so we're chilling
           } else {
-            // need to check if any users in the DB have the same email
+            // need to check if any users in the DB have the same phone
             const userColl = (
               collection(db, USERS).withConverter(genericConverter<userT>())
             )
 
-            const sameEmailQ = query(userColl, where("email", "==", user.email))
-            getDocs(sameEmailQ).then(sameEmailSnap => {
-              const users = sameEmailSnap.docs
+            const samePhoneQ = query(userColl, where("email", "==", user.phoneNumber))
+            getDocs(samePhoneQ).then(samePhoneSnap => {
+              const users = samePhoneSnap.docs
               if (users.length > 0) {
                 localStorage.setItem("userID", users[0].id)
               } else {
                 navigate(
                   "/edit-profile",
-                  { state: {...props, email: user.email} }
+                  { state: {...props, phoneNo: user.phoneNumber} }
                 )
               }
             })
           }
         })
-        
+
       } else {
-        const auth = getAuth()
-        const provider = new GoogleAuthProvider()
-        signInWithRedirect(auth, provider)
+        navigate(
+          "/sign-up",
+          { state: { props } }
+        )
       }
     })
   }, [])

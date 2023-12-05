@@ -18,11 +18,11 @@ function EditProfile() {
   const location = useLocation()
   const {
     redirectBack,
-    email,
+    phone,
     state
   } = location.state as { 
     redirectBack: string, 
-    email?: string, 
+    phone?: string, 
     state?: any 
   }
 
@@ -31,7 +31,7 @@ function EditProfile() {
   const [user, setUser] = useState<userT>({
     name: "",
     gender: "Male",
-    email: "",
+    phone: "",
     "profile-pic": defaultPFP,
     preferences: [false, false, false]
   })
@@ -160,10 +160,10 @@ function EditProfile() {
           setPfpURL(url)
         })
 
-        if (typeof email === 'undefined') {
-          throw new Error(`Email undefined for user ${userRef.id}`)
+        if (typeof phone === 'undefined') {
+          throw new Error(`Phone undefined for user ${userRef.id}`)
         }
-        setUser({...user, email: email})
+        setUser({...user, phone: phone})
       }
     })
   }, [])
@@ -195,7 +195,13 @@ function EditProfile() {
                 className="pfp-input"
               />
             </label>
-            <img src={pfpURL} height={360} width={360} className="pfp" />
+            <img 
+              src={pfpURL} 
+              height={360} 
+              width={360} 
+              className="pfp" 
+              alt="Your profile"
+            />
 
             <label>Select your gender identity:
               <select 

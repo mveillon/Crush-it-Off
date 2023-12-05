@@ -1,0 +1,32 @@
+.sign-up {
+  margin-left: 5vw;
+  margin-right: 10vw;
+}
+
+.number-section {
+  padding: 2vw;
+  border: 1px solid var(--text-color);
+  background-color: var(--translucent-red);
+  border-radius: 5vw;
+  margin-bottom: 10vh;
+}
+
+.numbers {
+  display: flex;
+}
+
+@media (max-width: 800px) {
+  .numbers {
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+}
+
+@media (min-width: 801px) {
+  .numbers {
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+}
