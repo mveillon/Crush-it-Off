@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword  } from "firebase/auth";
+import { 
+  createUserWithEmailAndPassword, 
+  getAuth, 
+  signInWithEmailAndPassword 
+} from "firebase/auth";
 
 import "./sign-up.css";
 import "../../global.css";
@@ -21,7 +25,8 @@ function SignUp() {
   const [invalid, setInvalid] = useState(false)
 
   const navigate = useNavigate()
-  const createUser = () => {
+  const createUser = (e: FormEvent) => {
+    e.preventDefault()
     if (password1 !== password2) {
       setInvalid(true)
     } else {
@@ -41,7 +46,8 @@ function SignUp() {
     }
   }
 
-  const loginUser = () => {
+  const loginUser = (e: FormEvent) => {
+    e.preventDefault()
     const auth = getAuth()
     signInWithEmailAndPassword(
       auth,
@@ -67,7 +73,7 @@ function SignUp() {
         <h1 className="title">Sign up to use Crushers</h1>
 
         <div className="sign-up">
-          <div className="email-input">
+          <form className="email-input" onSubmit={createUser}>
             <label>Enter your email: 
               <input 
                 type="email" 
@@ -95,17 +101,18 @@ function SignUp() {
               />
             </label>
 
-            <button onClick={createUser}>
-              Sign Up
-            </button>
+            <input 
+              type="submit" 
+              value="Sign Up"
+            />
 
             {
               invalid &&
               <p>Passwords don't match!</p>
             }
-          </div>
+          </form>
 
-          <div className="email-input">
+          <form className="email-input" onSubmit={loginUser}>
             <h2>Already have an account? Login:</h2>
 
             <label>Enter your email:
@@ -126,13 +133,16 @@ function SignUp() {
               />
             </label>
 
-            <button onClick={loginUser}>Login</button>
+            <input
+              type="submit"
+              value="Login"
+            />
 
             {
               invalid &&
               <p>Email and password do not match!</p>
             }
-          </div>
+          </form>
         </div>
       </div>
     </div>

@@ -12,8 +12,19 @@
 
 .logo {
   aspect-ratio: 1 / 1;
-  height: 4.5vw;
   border-radius: 1.5vw;
+}
+
+@media (max-width: 800px) {
+  .logo {
+    height: 3.5vh;
+  }
+}
+
+@media (min-width: 801px) {
+  .logo {
+    height: 10vh;
+  }
 }
 
 .hamburger {
