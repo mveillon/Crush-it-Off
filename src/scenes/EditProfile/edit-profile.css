@@ -3,17 +3,16 @@ label {
   margin-bottom: 2vh;
 }
 
-.pfp {
-  object-fit: contain;
-  margin-bottom: 2vh;
-}
-
 .edit-profile {
   margin-left: 5vw;
 }
 
 .pfp-input {
   background-color: var(--translucent-red);
+}
+
+.gender-ident {
+  margin-top: 2vh;
 }
 
 @media (max-width: 800px) {

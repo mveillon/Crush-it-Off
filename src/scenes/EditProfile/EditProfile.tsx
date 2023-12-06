@@ -17,10 +17,8 @@ import "../../global.css";
 function EditProfile() {
   const location = useLocation()
   const {
-    redirectBack,
     email
   } = location.state as { 
-    redirectBack: string, 
     email?: string, 
   }
 
@@ -192,14 +190,12 @@ function EditProfile() {
               />
             </label>
             <img 
-              src={pfpURL} 
-              height={360} 
-              width={360} 
-              className="pfp" 
+              src={pfpURL}
+              className="lobby-pfp" 
               alt="Your profile"
             />
 
-            <label>Select your gender identity:
+            <label className="gender-ident">Select your gender identity:
               <select 
                 onChange={(e) => changeGender(e.target.value)}
                 className="gender-select"
