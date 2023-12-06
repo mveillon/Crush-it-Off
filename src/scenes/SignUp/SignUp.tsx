@@ -74,6 +74,10 @@ function SignUp() {
 
         <div className="sign-up">
           <form className="email-input" onSubmit={createUser}>
+            <h2>
+              New to Crushers? Sign up: 
+            </h2>
+
             <label>Enter your email: 
               <input 
                 type="email" 
