@@ -23,12 +23,15 @@ function SignUp() {
   const [password2, setPassword2] = useState('')
 
   const [invalid, setInvalid] = useState(false)
+  const [dupeEmail, setDupeEmail] = useState(false)
 
   const navigate = useNavigate()
   const createUser = (e: FormEvent) => {
     e.preventDefault()
     if (password1 !== password2) {
       setInvalid(true)
+      setDupeEmail(false)
+
     } else {
       const auth = getAuth()
       createUserWithEmailAndPassword(
@@ -42,6 +45,9 @@ function SignUp() {
           "/edit-profile",
           { state: {...location.state, email: user.email} }
         )
+      }).catch(error => {
+        setDupeEmail(true)
+        setInvalid(false)
       })
     }
   }
@@ -113,6 +119,10 @@ function SignUp() {
             {
               invalid &&
               <p>Passwords don't match!</p>
+            }
+            {
+              dupeEmail &&
+              <p>Email already in use!</p>
             }
           </form>
 

@@ -156,7 +156,9 @@ function WaitingRoom() {
       <Header />
 
       <div className="content">
-        <h1 className="title">Waiting for submissions from:</h1>
+        <h1 className="title">
+          Lobby {lobbyID} is waiting for submissions from:
+        </h1>
 
         <div className="waiting-names">
           {

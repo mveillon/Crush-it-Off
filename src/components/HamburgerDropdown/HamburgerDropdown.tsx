@@ -1,5 +1,5 @@
 import React from "react";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
 
 import "./hamburger-dropdown.css";
@@ -10,7 +10,7 @@ function HamburgerDropdown(props: { style: {display: string }}) {
   const toEditProfile = () => {
     navigate(
       "/edit-profile",
-      { state: { redirectBack: "/" } }
+      { state: { redirectBack: "/home" } }
     )
   }
 

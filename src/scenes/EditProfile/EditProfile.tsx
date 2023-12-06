@@ -123,7 +123,7 @@ function EditProfile() {
               uploadBytes(imgRef, blob as Blob).then(_ => {
                 setDoc(userRef, {...user, "profile-pic": fileName})
                 navigate(
-                  redirectBack
+                  "/home"
                 )
               })
             })
@@ -131,7 +131,7 @@ function EditProfile() {
       } else {
         setDoc(userRef, user)
         navigate(
-          redirectBack
+          "/home"
         )
       }
     } else {
