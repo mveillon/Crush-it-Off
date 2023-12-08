@@ -49,6 +49,7 @@ function Lobby() {
   }
   const [lobbyMembers, setLobbyMembers] = useState<member[]>([])
   const [userData, setUserData] = useState<userT | undefined>(undefined)
+  const [allMembers, setAllMembers] = useState<string[]>([])
 
   // could p1 be attracted to p2
   const attracted = (p1: userT, p2: userT): boolean => {
@@ -56,10 +57,10 @@ function Lobby() {
   }
 
   const changeSwitch = (
-    change: DocumentChange, 
+    changeType: string, 
     toAdd: member
   ) => {
-    switch(change.type) {
+    switch(changeType) {
       case "added":
         let found = false
         for (const mem of lobbyMembers) {
@@ -97,7 +98,7 @@ function Lobby() {
         break;
 
       default:
-        throw new Error(`Unsupported change type: ${change.type}`)
+        throw new Error(`Unsupported change type: ${changeType}`)
     }
   }
 
@@ -116,6 +117,14 @@ function Lobby() {
 
         const pfpRef = ref(storage, `${PFPs}/${memberData["profile-pic"]}`)
         getDownloadURL(pfpRef).then(url => {
+          if (change.type === "added") {
+            if (!allMembers.includes(memberID)) {
+              setAllMembers([...allMembers, memberID])
+            }
+          } else if (change.type === "removed") {
+            setAllMembers(allMembers.filter(id => id !== memberID))
+          }
+
           if (attracted(userData, memberData)) {
             const toAdd = {
               uid: memberID,
@@ -124,9 +133,9 @@ function Lobby() {
               pfp: url
             }
     
-            changeSwitch(change, toAdd)
+            changeSwitch(change.type, toAdd)
           }
-        })  
+        }) 
       }
     })
   }
@@ -153,8 +162,31 @@ function Lobby() {
     })
   }
 
+  // returns either "added", "removed", or "modified" based on 
+  // whether the user changed their gender or not
+  const changedGenderType = (memberID: string, memberData: userT): string => {
+    if (typeof userData === 'undefined') {
+      throw new Error('userData is undefined')
+    }
+
+    let found = false
+    for (const lobbyMem of lobbyMembers) {
+      if (lobbyMem.uid === memberID) {
+        found = true
+        break
+      }
+    }
+
+    const inAll = allMembers.includes(memberID)
+    const userInto = attracted(userData, memberData)
+    
+    if (inAll && !found && userInto) return "added"
+    else if (found && !userInto) return "removed"
+    return "modified"
+    
+  }
+
   const userChangesSnapshot = (): Unsubscribe => {
-    const memberIDs = lobbyMembers.map(member => member.uid)
     const allUsers = (
       collection(
         db,
@@ -162,7 +194,7 @@ function Lobby() {
       ).withConverter(genericConverter<userT>())
     )
     const justMembersQ = (
-      query(allUsers, where(documentId(), "in", memberIDs))
+      query(allUsers, where(documentId(), "in", allMembers))
     )
 
     return onSnapshot(justMembersQ, snapshot => {
@@ -178,8 +210,11 @@ function Lobby() {
               pfp: url,
               checked: false
             }
-  
-            changeSwitch(change, newMember)
+
+            changeSwitch(
+              changedGenderType(change.doc.id, memberData), 
+              newMember
+            )
           })
         }
       }
@@ -214,7 +249,7 @@ function Lobby() {
         unsub2()
       }
     }
-  }, [lobbyMembers, userData])
+  }, [allMembers, userData])
 
   const toggleChecked = (ind: number) => {
     lobbyMembers[ind].checked = !lobbyMembers[ind].checked

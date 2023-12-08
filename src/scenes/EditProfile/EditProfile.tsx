@@ -199,6 +199,7 @@ function EditProfile() {
               <select 
                 onChange={(e) => changeGender(e.target.value)}
                 className="gender-select"
+                value={user.gender}
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
