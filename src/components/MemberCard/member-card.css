@@ -9,7 +9,7 @@
   border-radius: 5vw;
   padding-top: 3vh;
   padding-bottom: 3vh;
-  background-color: var(--translucent-red);
+  background-color: var(--secondary-color);
 }
 
 @media (max-width: 800px) {

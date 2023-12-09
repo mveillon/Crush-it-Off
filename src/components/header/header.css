@@ -13,17 +13,26 @@
 .logo {
   aspect-ratio: 1 / 1;
   border-radius: 1.5vw;
+  height: 50%;
 }
 
 @media (max-width: 800px) {
   .logo {
     height: 3.5vh;
   }
+
+  .header {
+    height: 7vh;
+  }
 }
 
 @media (min-width: 801px) {
   .logo {
     height: 10vh;
+  }
+
+  .header {
+    height: 20vh;
   }
 }
 

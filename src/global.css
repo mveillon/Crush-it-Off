@@ -1,10 +1,9 @@
 :root {
   --bg-color: #ece4f1;
   --text-color: #2b444e;
-  --primary-color: #e61056;
-  --secondary-color: #d85e58;
+  --primary-color: rgba(240, 45, 110, 0.8);
+  --secondary-color: rgba(216, 94, 88, 0.25);
   --accent-color: #48b39a;
-  --translucent-red: rgba(216, 94, 88, 0.25);
 }
 
 h1 {
@@ -72,7 +71,7 @@ button:hover {
 input {
   color: var(--text-color);
   margin-left: 0.5vw;
-  background-color: var(--translucent-red);
+  background-color: var(--secondary-color);
 }
 
 label {

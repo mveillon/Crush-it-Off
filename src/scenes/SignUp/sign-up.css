@@ -6,7 +6,7 @@
 .email-input {
   padding: 2vw;
   border: 1px solid var(--text-color);
-  background-color: var(--translucent-red);
+  background-color: var(--secondary-color);
   border-radius: 5vw;
   margin-bottom: 10vh;
   width: fit-content;

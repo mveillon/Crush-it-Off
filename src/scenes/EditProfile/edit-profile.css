@@ -8,7 +8,7 @@ label {
 }
 
 .pfp-input {
-  background-color: var(--translucent-red);
+  background-color: var(--secondary-color);
 }
 
 .gender-ident {
@@ -28,7 +28,7 @@ label {
 }
 
 .prefs {
-  background-color: var(--translucent-red);
+  background-color: var(--secondary-color);
   border-radius: 5vw;
   padding: 2vw;
   width: fit-content;

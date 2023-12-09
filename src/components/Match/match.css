@@ -1,6 +1,6 @@
 .single-match {
   border-radius: 5vw;
-  background-color: var(--translucent-red);
+  background-color: var(--secondary-color);
   padding: 3vw;
   width: fit-content;
   margin-bottom: 5vh;
