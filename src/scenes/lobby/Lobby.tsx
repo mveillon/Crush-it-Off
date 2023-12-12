@@ -8,7 +8,6 @@ import {
   doc, 
   getDoc, 
   collection,
-  DocumentChange,
   setDoc,
   query,
   where,
@@ -53,7 +52,7 @@ function Lobby() {
 
   // could p1 be attracted to p2
   const attracted = (p1: userT, p2: userT): boolean => {
-    return p1.preferences[GENDER_MAP[p2.gender]]
+    return p1.email !== p2.email && p1.preferences[GENDER_MAP[p2.gender]]
   }
 
   const changeSwitch = (
@@ -92,6 +91,7 @@ function Lobby() {
         break;
 
       case "removed":
+        console.log('removing')
         setLobbyMembers(
           lobbyMembers.filter(mem => mem.uid !== toAdd.uid)
         )
@@ -102,50 +102,36 @@ function Lobby() {
     }
   }
 
-  const handleChange = (
-    userData: userT,
-    change: DocumentChange
-  ) => {
-    const memberID = change.doc.id
+  const lookupID = async (
+    userData: userT, 
+    memberID: string
+  ): Promise<member | undefined> => {
     const memDoc = (
       doc(db, USERS, memberID).withConverter(genericConverter<userT>())
     )
 
-    getDoc(memDoc).then(newMember => {
-      if (newMember.exists()) {
-        const memberData = newMember.data()
+    const newMember = await getDoc(memDoc)
+    if (newMember.exists()) {
+      const memberData = newMember.data()
 
-        const pfpRef = ref(storage, `${PFPs}/${memberData["profile-pic"]}`)
-        getDownloadURL(pfpRef).then(url => {
-          if (change.type === "added") {
-            if (!allMembers.includes(memberID)) {
-              setAllMembers([...allMembers, memberID])
-            }
-          } else if (change.type === "removed") {
-            setAllMembers(allMembers.filter(id => id !== memberID))
-          }
+      const pfpRef = ref(storage, `${PFPs}/${memberData["profile-pic"]}`)
+      const url = await getDownloadURL(pfpRef)
+      if (attracted(userData, memberData)) {
+        const toAdd = {
+          uid: memberID,
+          name: memberData.name,
+          checked: false,
+          pfp: url
+        }
 
-          if (attracted(userData, memberData)) {
-            const toAdd = {
-              uid: memberID,
-              name: memberData.name,
-              checked: false,
-              pfp: url
-            }
-    
-            changeSwitch(change.type, toAdd)
-          }
-        }) 
+        return toAdd
       }
-    })
+    }
+
+    return undefined
   }
 
-  const createOnSnapshot = (): Unsubscribe => {
-    if (typeof userData === 'undefined') {
-      // should never happen
-      throw new Error('userData is undefined')
-    }
-    
+  const createOnSnapshot = (theUser: userT): Unsubscribe => {
     const memberRef = (
       collection(
         db,
@@ -156,9 +142,17 @@ function Lobby() {
     )
 
     return onSnapshot(memberRef, memberSnapshot => {
-      for (const change of memberSnapshot.docChanges()) {
-        handleChange(userData, change)
-      }
+      const newMembers = (
+        memberSnapshot.docs.map(doc => lookupID(theUser, doc.id))
+      )
+
+      Promise.all(newMembers).then(mems => {
+        setLobbyMembers(
+          (mems.filter(m => typeof m !== 'undefined')) as member[]
+        )
+      })
+
+      setAllMembers(memberSnapshot.docs.map(doc => doc.id))
     })
   }
 
@@ -197,6 +191,7 @@ function Lobby() {
       query(allUsers, where(documentId(), "in", allMembers))
     )
 
+    // TODO : this doesn't seem to be working in the removal case
     return onSnapshot(justMembersQ, snapshot => {
       for (const change of snapshot.docChanges()) {
         if (change.type === "modified") {
@@ -222,31 +217,36 @@ function Lobby() {
   }
 
   useEffect(() => {
-    const userDoc = (
-      doc(db, USERS, getUserID()).withConverter(genericConverter<userT>())
-    )
+    const u = new Promise<Unsubscribe>((resolve, _) => {
+      const userDoc = (
+        doc(db, USERS, getUserID()).withConverter(genericConverter<userT>())
+      )
+      
+      getDoc(userDoc).then((snapshot => {
+        if (snapshot.exists()) {
+          const userData = snapshot.data()
+          const unsub = createOnSnapshot(userData)
+          setUserData(userData)
+          resolve(unsub)
+
+        } else {
+          throw new Error("Could not authenticate user")
+        }
+      }))
+    })
     
-    getDoc(userDoc).then((snapshot => {
-      if (snapshot.exists()) {
-        const userData = snapshot.data()
-        setUserData(userData)
-      } else {
-        throw new Error("Could not authenticate user")
-      }
-    }))
+    return () => { u.then(unsub => unsub()) }
   }, [])
 
   useEffect(() => {
     if (typeof userData !== 'undefined') {
-      const unsub = createOnSnapshot()
-      let unsub2 = () => {}
+      let unsub = () => {}
       if (lobbyMembers.length > 0) {
-        unsub2 = userChangesSnapshot()
+        unsub = userChangesSnapshot()
       }
       
       return () => {
         unsub()
-        unsub2()
       }
     }
   }, [allMembers, userData])
@@ -294,7 +294,13 @@ function Lobby() {
           <h2>Check off the names you would go on a date with: </h2>
           <div className="names">
             {
-              lobbyMembers.map((member, i) => {
+              lobbyMembers
+                .sort((mem1, mem2) => {
+                  if (mem1.name < mem2.name) return -1
+                  if (mem1.name > mem2.name) return 1
+                  return 0
+                })
+                .map((member, i) => {
                 return (
                   <MemberCard
                     name={member.name}

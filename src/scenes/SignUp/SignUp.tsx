@@ -28,7 +28,7 @@ function SignUp() {
   const navigate = useNavigate()
   const createUser = (e: FormEvent) => {
     e.preventDefault()
-    if (password1 !== password2) {
+    if (password1 !== password2 || password1.length < 6) {
       setInvalid(true)
       setDupeEmail(false)
 
@@ -46,6 +46,7 @@ function SignUp() {
           { state: {...location.state, email: user.email} }
         )
       }).catch(error => {
+        console.log(error)
         setDupeEmail(true)
         setInvalid(false)
       })
@@ -118,7 +119,9 @@ function SignUp() {
 
             {
               invalid &&
-              <p>Passwords don't match!</p>
+              <p>
+                Invalid password! Passwords must match and be at least 6 characters.
+              </p>
             }
             {
               dupeEmail &&
