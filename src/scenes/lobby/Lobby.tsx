@@ -207,7 +207,8 @@ function Lobby() {
       ...oldMember,
       checked: !oldMember.checked
     }
-    setAllMembers({...allMembers, id: newMember})
+
+    setAllMembers({...allMembers, [id]: newMember})
   }
 
   const navigate = useNavigate()
