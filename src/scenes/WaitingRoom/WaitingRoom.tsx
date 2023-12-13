@@ -162,11 +162,17 @@ function WaitingRoom() {
 
         <div className="waiting-names">
           {
-            notSubmitted.map((member, i) => {
-              return (
-                <p key={i}>{member.name}</p>
-              )
-            })
+            notSubmitted
+              .sort((mem1, mem2) => {
+                if (mem1.name < mem2.name) return -1
+                if (mem1.name > mem2.name) return 1
+                return 0
+              })
+              .map((member, i) => {
+                return (
+                  <p key={i}>{member.name}</p>
+                )
+              })
           }
         </div>
       </div>

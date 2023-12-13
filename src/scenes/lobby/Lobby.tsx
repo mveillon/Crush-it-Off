@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
@@ -44,68 +44,20 @@ function Lobby() {
     uid: string, 
     name: string, 
     checked: boolean,
-    pfp: string
+    pfp: string,
+    gender: string
   }
-  const [lobbyMembers, setLobbyMembers] = useState<member[]>([])
+
+  const [allMembers, setAllMembers] = useState<{ [index: string]: member }>({})
   const [userData, setUserData] = useState<userT | undefined>(undefined)
-  const [allMembers, setAllMembers] = useState<string[]>([])
+  const userID = useMemo(() => getUserID(), [])
 
-  // could p1 be attracted to p2
-  const attracted = (p1: userT, p2: userT): boolean => {
-    return p1.email !== p2.email && p1.preferences[GENDER_MAP[p2.gender]]
+  // could u be attracted to someone of gender
+  const attracted = (u: userT, gender: string): boolean => {
+    return u.preferences[GENDER_MAP[gender]]
   }
 
-  const changeSwitch = (
-    changeType: string, 
-    toAdd: member
-  ) => {
-    switch(changeType) {
-      case "added":
-        let found = false
-        for (const mem of lobbyMembers) {
-          if (mem.uid === toAdd.uid) {
-            found = true
-            break
-          }
-        }
-        if (!found) setLobbyMembers([...lobbyMembers, toAdd])
-        break;
-
-      case "modified":
-        for (let i = 0; i < lobbyMembers.length; i++) {
-          if (lobbyMembers[i].uid === toAdd.uid) {
-            const end = (
-              i < lobbyMembers.length - 1 ? 
-              lobbyMembers.slice(i + 1, lobbyMembers.length) : 
-              []
-            )
-
-            setLobbyMembers([
-              ...lobbyMembers.slice(0, i),
-              toAdd,
-              ...end
-            ])
-            break;
-          }
-        }
-        break;
-
-      case "removed":
-        console.log('removing')
-        setLobbyMembers(
-          lobbyMembers.filter(mem => mem.uid !== toAdd.uid)
-        )
-        break;
-
-      default:
-        throw new Error(`Unsupported change type: ${changeType}`)
-    }
-  }
-
-  const lookupID = async (
-    userData: userT, 
-    memberID: string
-  ): Promise<member | undefined> => {
+  const getMemberData = async (memberID: string): Promise<member> => {
     const memDoc = (
       doc(db, USERS, memberID).withConverter(genericConverter<userT>())
     )
@@ -116,22 +68,42 @@ function Lobby() {
 
       const pfpRef = ref(storage, `${PFPs}/${memberData["profile-pic"]}`)
       const url = await getDownloadURL(pfpRef)
-      if (attracted(userData, memberData)) {
-        const toAdd = {
-          uid: memberID,
-          name: memberData.name,
-          checked: false,
-          pfp: url
-        }
 
-        return toAdd
+      const toAdd: member = {
+        uid: memberID,
+        name: memberData.name,
+        gender: memberData.gender,
+        checked: false,
+        pfp: url
+      }
+
+      return toAdd
+    } else {
+      throw new Error(`Cannot resolve memberID ${memberID} in lobby ${lobbyID}`)
+    }
+  }
+
+  const addMembers = (ids: string[]) => {
+    const newMembers = {...allMembers}
+    const workers: Promise<void>[] = []
+
+    for (const id of ids) {
+      if (!(id in allMembers)) {
+        workers.push(new Promise((resolve, _) => {
+          getMemberData(id).then(toAdd => {
+            newMembers[id] = toAdd
+            resolve()
+          })
+        }))
       }
     }
 
-    return undefined
+    Promise.all(workers).then(_ => {
+      setAllMembers(newMembers)
+    })
   }
 
-  const createOnSnapshot = (theUser: userT): Unsubscribe => {
+  const createOnSnapshot = (): Unsubscribe => {
     const memberRef = (
       collection(
         db,
@@ -142,42 +114,19 @@ function Lobby() {
     )
 
     return onSnapshot(memberRef, memberSnapshot => {
-      const newMembers = (
-        memberSnapshot.docs.map(doc => lookupID(theUser, doc.id))
-      )
-
-      Promise.all(newMembers).then(mems => {
-        setLobbyMembers(
-          (mems.filter(m => typeof m !== 'undefined')) as member[]
-        )
-      })
-
-      setAllMembers(memberSnapshot.docs.map(doc => doc.id))
+      addMembers(memberSnapshot.docs.map(doc => doc.id))
     })
   }
 
-  // returns either "added", "removed", or "modified" based on 
-  // whether the user changed their gender or not
-  const changedGenderType = (memberID: string, memberData: userT): string => {
-    if (typeof userData === 'undefined') {
-      throw new Error('userData is undefined')
+  const handleUserChanges = (newMembers: member[]) => {
+    if (newMembers.length === 0) return
+
+    const newCache = {...allMembers}
+    for (const toAdd of newMembers) {
+      newCache[toAdd.uid] = toAdd
     }
 
-    let found = false
-    for (const lobbyMem of lobbyMembers) {
-      if (lobbyMem.uid === memberID) {
-        found = true
-        break
-      }
-    }
-
-    const inAll = allMembers.includes(memberID)
-    const userInto = attracted(userData, memberData)
-    
-    if (inAll && !found && userInto) return "added"
-    else if (found && !userInto) return "removed"
-    return "modified"
-    
+    setAllMembers(newCache)
   }
 
   const userChangesSnapshot = (): Unsubscribe => {
@@ -188,46 +137,49 @@ function Lobby() {
       ).withConverter(genericConverter<userT>())
     )
     const justMembersQ = (
-      query(allUsers, where(documentId(), "in", allMembers))
+      query(allUsers, where(documentId(), "in", Object.keys(allMembers)))
     )
 
-    // TODO : this doesn't seem to be working in the removal case
     return onSnapshot(justMembersQ, snapshot => {
+      const memberCollectors: Promise<member>[] = []
+
       for (const change of snapshot.docChanges()) {
         if (change.type === "modified") {
           const memberData = change.doc.data()
+
           const pfpRef = ref(storage, `${PFPs}/${memberData["profile-pic"]}`)
-
-          getDownloadURL(pfpRef).then(url => {
-            const newMember: member = {
-              uid: change.doc.id,
-              name: memberData.name,
-              pfp: url,
-              checked: false
-            }
-
-            changeSwitch(
-              changedGenderType(change.doc.id, memberData), 
-              newMember
-            )
+          const p = new Promise<member>((resolve, _) => {
+            getDownloadURL(pfpRef).then(url => {
+              const toAdd: member = {
+                uid: change.doc.id,
+                name: memberData.name,
+                gender: memberData.gender,
+                checked: false,
+                pfp: url
+              }
+              resolve(toAdd)
+            })
           })
+          memberCollectors.push(p)
         }
       }
+
+      Promise.all(memberCollectors).then(newMembers => {
+        handleUserChanges(newMembers)
+      })
     })
   }
 
   useEffect(() => {
     const u = new Promise<Unsubscribe>((resolve, _) => {
       const userDoc = (
-        doc(db, USERS, getUserID()).withConverter(genericConverter<userT>())
+        doc(db, USERS, userID).withConverter(genericConverter<userT>())
       )
       
       getDoc(userDoc).then((snapshot => {
         if (snapshot.exists()) {
-          const userData = snapshot.data()
-          const unsub = createOnSnapshot(userData)
-          setUserData(userData)
-          resolve(unsub)
+          setUserData(snapshot.data())
+          resolve(createOnSnapshot())
 
         } else {
           throw new Error("Could not authenticate user")
@@ -239,21 +191,23 @@ function Lobby() {
   }, [])
 
   useEffect(() => {
-    if (typeof userData !== 'undefined') {
-      let unsub = () => {}
-      if (lobbyMembers.length > 0) {
-        unsub = userChangesSnapshot()
-      }
-      
-      return () => {
-        unsub()
-      }
+    let unsub = () => {}
+    if (Object.keys(allMembers).length > 0) {
+      unsub = userChangesSnapshot()
     }
-  }, [allMembers, userData])
+    
+    return () => {
+      unsub()
+    }
+  }, [allMembers])
 
-  const toggleChecked = (ind: number) => {
-    lobbyMembers[ind].checked = !lobbyMembers[ind].checked
-    setLobbyMembers([...lobbyMembers])
+  const toggleChecked = (id: string) => {
+    const oldMember = allMembers[id]
+    const newMember = {
+      ...oldMember,
+      checked: !oldMember.checked
+    }
+    setAllMembers({...allMembers, id: newMember})
   }
 
   const navigate = useNavigate()
@@ -264,7 +218,7 @@ function Lobby() {
         LOBBIES,
         `${lobbyID}`,
         "users",
-        getUserID()
+        userID
       ).withConverter(genericConverter<userLink>())
     )
 
@@ -272,7 +226,7 @@ function Lobby() {
       userMember, 
       {
         submitted: true,
-        crushes: lobbyMembers.filter(mem => mem.checked).map(mem => mem.uid)
+        crushes: Object.keys(allMembers).filter(uid => allMembers[uid].checked)
       }
     )
 
@@ -294,23 +248,28 @@ function Lobby() {
           <h2>Check off the names you would go on a date with: </h2>
           <div className="names">
             {
-              lobbyMembers
-                .sort((mem1, mem2) => {
-                  if (mem1.name < mem2.name) return -1
-                  if (mem1.name > mem2.name) return 1
+              typeof userData !== "undefined" &&
+              Object.keys(allMembers)
+                .filter(uid => (
+                  uid !== userID && 
+                  attracted(userData, allMembers[uid].gender)
+                ))
+                .sort((uid1, uid2) => {
+                  const name1 = allMembers[uid1].name
+                  const name2 = allMembers[uid2].name
+                  if (name1 < name2) return -1
+                  if (name1 > name2) return 1
                   return 0
                 })
-                .map((member, i) => {
-                return (
+                .map(uid => (
                   <MemberCard
-                    name={member.name}
-                    pfpUrl={member.pfp}
-                    checked={member.checked}
-                    onCheck={() => toggleChecked(i)}
-                    key={i}
+                    name={allMembers[uid].name}
+                    pfpUrl={allMembers[uid].pfp}
+                    checked={allMembers[uid].checked}
+                    onCheck={() => toggleChecked(uid)}
+                    key={uid}
                   />
-                )
-              })
+                ))
             }
           </div>
 
