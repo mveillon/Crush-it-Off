@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from "react";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import { 
   createUserWithEmailAndPassword, 
@@ -22,15 +22,27 @@ function SignUp() {
   const [password1, setPassword1] = useState('')
   const [password2, setPassword2] = useState('')
 
-  const [invalid, setInvalid] = useState(false)
-  const [dupeEmail, setDupeEmail] = useState(false)
+  type errors = { 
+    badPassword: boolean, 
+    dupeEmail: boolean, 
+    passMismatch: boolean 
+  }
+  const [allErrors, setAllErrors] = useState<errors>({
+    badPassword: false,
+    dupeEmail: false,
+    passMismatch: false
+  }) 
 
   const navigate = useNavigate()
   const createUser = (e: FormEvent) => {
     e.preventDefault()
     if (password1 !== password2 || password1.length < 6) {
-      setInvalid(true)
-      setDupeEmail(false)
+      setAllErrors({
+        badPassword: true,
+        dupeEmail: false,
+        passMismatch: false
+      })
+      setPassword2('')
 
     } else {
       const auth = getAuth()
@@ -47,8 +59,11 @@ function SignUp() {
         )
       }).catch(error => {
         console.log(error)
-        setDupeEmail(true)
-        setInvalid(false)
+        setAllErrors({
+          badPassword: false,
+          dupeEmail: true,
+          passMismatch: false
+        })
       })
     }
   }
@@ -68,7 +83,12 @@ function SignUp() {
         { state: state }
       )
     }).catch(error => {
-      setInvalid(true)
+      setAllErrors({
+        badPassword: false,
+        dupeEmail: false,
+        passMismatch: true
+      })
+      setPassword1('')
       console.log(error.message)
     })
   }
@@ -118,13 +138,13 @@ function SignUp() {
             />
 
             {
-              invalid &&
+              allErrors.badPassword &&
               <p>
                 Invalid password! Passwords must match and be at least 6 characters.
               </p>
             }
             {
-              dupeEmail &&
+              allErrors.dupeEmail &&
               <p>Email already in use!</p>
             }
           </form>
@@ -150,13 +170,17 @@ function SignUp() {
               />
             </label>
 
+            <Link to="/reset-password" className="link">
+              Forgot your password?
+            </Link>
+
             <input
               type="submit"
               value="Login"
             />
 
             {
-              invalid &&
+              allErrors.passMismatch &&
               <p>Email and password do not match!</p>
             }
           </form>

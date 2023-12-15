@@ -66,7 +66,7 @@ function JoinLobby() {
       <form onSubmit={goToLobby} className="join-lobby">
         <label>Lobby Code: 
           <input
-            type="text"
+            type="number"
             value={code}
             onChange={(e) => setCode(e.target.value)}
             autoFocus={true}

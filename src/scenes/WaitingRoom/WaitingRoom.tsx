@@ -4,17 +4,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import CheckLoggedIn from "../../firebase/CheckLoggedIn";
 import { LOBBIES, USERS, userLink, userT } from "../../firebase/dbStructure";
-import getUserID from "../../firebase/getUserID";
 import { firebaseDB } from "../../firebase/init";
 import { 
-  DocumentChange,
   Unsubscribe,
   collection,
   doc, 
   getDoc, 
-  onSnapshot, 
-  query,
-  where,
+  onSnapshot,
   Query
 } from "firebase/firestore";
 import genericConverter from "../../firebase/genericConverter";
@@ -29,9 +25,8 @@ function WaitingRoom() {
   } = location.state as { lobbyID: number }
 
   const db = firebaseDB()
-  type member = { name: string, uid: string }
-  const [notSubmitted, setNotSubmitted] = useState<member[]>([])
-  const [userData, setUserData] = useState<userT | undefined>(undefined)
+  type member = { name: string, submitted: boolean }
+  const [members, setMembers] = useState<{ [index: string]: member }>({})
 
   const navigate = useNavigate()
 
@@ -42,113 +37,83 @@ function WaitingRoom() {
     )
   }
 
-  const changeSwitch = (change: DocumentChange, toAdd: member) => {
-    switch(change.type) {
-      case "added":
-        let found = false
-        for (let i = 0; i < notSubmitted.length; i++) {
-          if (notSubmitted[i].uid === toAdd.uid) {
-            found = true
-            break;
-          }
-        }
-        if (!found) setNotSubmitted([...notSubmitted, toAdd])
-        break;
+  const getMemberName = async (memberID: string): Promise<string> => {
+    const memRef = (
+      doc(
+        db,
+        USERS,
+        memberID
+      ).withConverter(genericConverter<userT>())
+    )
 
-      // @ts-ignore
-      case "modified":
-        if (!change.doc.data().submitted) {
-          for (let i = 0; i < notSubmitted.length; i++) {
-            if (notSubmitted[i].uid === toAdd.uid) {
-              const end = (
-                i < notSubmitted.length - 1 ?
-                notSubmitted.slice(i + 1, notSubmitted.length) :
-                []
-              )
-              setNotSubmitted([
-                ...notSubmitted.slice(0, i),
-                toAdd,
-                ...end
-              ])
-            }
-          }
-          break;
-        } // intentionally not breaking in else case
-
-      case "removed":
-        const newList = notSubmitted.filter(mem => mem.uid !== toAdd.uid)
-        if (newList.length === 0) {
-          goToMatches()
-        } else {
-          setNotSubmitted(
-            newList
-          )
-        }
-        break;
-
-      default:
-        throw new Error(`Unsupported change type: ${change.type}`)
+    const memberSnap = await getDoc(memRef)
+    if (memberSnap.exists()) {
+      return memberSnap.data().name
     }
+
+    throw new Error(`Invalid user ID ${memberID} in lobby ${lobbyID}`)
   }
 
   const createOnSnapshot = (lobbyQ: Query<userLink, userLink>): Unsubscribe => {
     return onSnapshot(lobbyQ, (memberSnapshot => {
-      if (memberSnapshot.empty) {
+      let foundSelecting = false
+
+      const newMembers = {...members}
+      const workers: Promise<[string, member]>[] = []
+      for (const doc of memberSnapshot.docs) {
+        const link = doc.data()
+        if (!link.submitted) {
+          foundSelecting = true
+        }
+
+        if (doc.id in members) {
+          const newMem = {
+            name: members[doc.id].name,
+            submitted: link.submitted
+          }
+          newMembers[doc.id] = newMem
+
+        } else {
+          workers.push(new Promise((resolve, reject) => {
+            getMemberName(doc.id)
+              .then(name => {
+                const newMem = {
+                  name: name,
+                  submitted: link.submitted
+                }
+                resolve([doc.id, newMem])
+              })
+              .catch(error => { reject(error) })
+          }))
+        }
+      }
+
+      if (!foundSelecting) {
         goToMatches()
       }
-      
-      for (const change of memberSnapshot.docChanges()) {
-        const memberID = change.doc.id
-        const memDoc = (
-          doc(db, USERS, memberID).withConverter(genericConverter<userT>())
-        )
 
-        getDoc(memDoc).then(newMemSnapshot => {
-          if (newMemSnapshot.exists()) {
-            const newMember = newMemSnapshot.data()
-            const toAdd: member = {
-              name: newMember.name,
-              uid: memberID
-            }
+      Promise.all(workers).then(memList => {
+        for (const [uid, mem] of memList) {
+          newMembers[uid] = mem
+        }
 
-            changeSwitch(change, toAdd)
-          } else {
-            throw new Error(`Unrecognized user ID ${memberID} in lobby ${lobbyID}`)
-          }
-        })
-      }
+        setMembers(newMembers)
+      })
     }))
   }
 
   useEffect(() => {
-    const uid = getUserID()
-    const userDoc = (
-      doc(db, USERS, uid).withConverter(genericConverter<userT>())
+    const lobbyRef = (
+      collection(
+        db,
+        LOBBIES,
+        `${lobbyID}`,
+        "users"
+      ).withConverter(genericConverter<userLink>())
     )
-    getDoc(userDoc).then(userSnap => {
-      if (userSnap.exists()) {
-        setUserData(userSnap.data())
-      } else {
-        throw new Error(`Cannot authenticate user with uid ${uid}`)
-      }
-    })
+
+    return createOnSnapshot(lobbyRef)
   }, [])
-
-  useEffect(() => {
-    if (typeof userData !== "undefined") {
-      const lobbyRef = (
-        collection(
-          db,
-          LOBBIES,
-          `${lobbyID}`,
-          "users"
-        ).withConverter(genericConverter<userLink>())
-      )
-
-      const lobbyQ = query(lobbyRef, where("submitted", "==", false))
-      return createOnSnapshot(lobbyQ)
-    }
-  }, [notSubmitted, userData])
 
   return (
     <div>
@@ -162,15 +127,18 @@ function WaitingRoom() {
 
         <div className="waiting-names">
           {
-            notSubmitted
-              .sort((mem1, mem2) => {
-                if (mem1.name < mem2.name) return -1
-                if (mem1.name > mem2.name) return 1
+            Object.keys(members)
+              .filter(uid => !members[uid].submitted)
+              .sort((uid1, uid2) => {
+                const name1 = members[uid1].name
+                const name2 = members[uid2].name
+                if (name1 < name2) return -1
+                if (name1 > name2) return 1
                 return 0
               })
-              .map((member, i) => {
+              .map(uid => {
                 return (
-                  <p key={i}>{member.name}</p>
+                  <p key={uid}>{members[uid].name}</p>
                 )
               })
           }

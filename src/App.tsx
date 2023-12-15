@@ -7,6 +7,7 @@ import Lobby from './scenes/Lobby/Lobby';
 import Matches from './scenes/Matches/Matches';
 import WaitingRoom from './scenes/WaitingRoom/WaitingRoom';
 import SignUp from './scenes/SignUp/SignUp';
+import ResetPassword from './scenes/ResetPassword/ResetPassword';
 
 function App() {
   return (
@@ -25,6 +26,8 @@ function App() {
         <Route path="/matches" element={<Matches />} />
 
         <Route path="/sign-up" element={<SignUp />} />
+
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   )
