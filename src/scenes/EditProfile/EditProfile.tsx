@@ -52,7 +52,7 @@ function EditProfile() {
     if (gender === 'Male' || gender === 'Female') {
       return gender
     }
-    return 'Non-Binary' // see Gender.ts for why we do this
+    return 'Non-Binary'
   }
 
   const changeGender = (gender: string) => {

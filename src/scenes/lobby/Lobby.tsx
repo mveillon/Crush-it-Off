@@ -89,7 +89,7 @@ function Lobby() {
 
     for (const id of ids) {
       if (!(id in allMembers)) {
-        workers.push(new Promise((resolve, _) => {
+        workers.push(new Promise((resolve) => {
           getMemberData(id).then(toAdd => {
             newMembers[id] = toAdd
             resolve()
@@ -148,7 +148,7 @@ function Lobby() {
           const memberData = change.doc.data()
 
           const pfpRef = ref(storage, `${PFPs}/${memberData["profile-pic"]}`)
-          const p = new Promise<member>((resolve, _) => {
+          const p = new Promise<member>((resolve) => {
             getDownloadURL(pfpRef).then(url => {
               const toAdd: member = {
                 uid: change.doc.id,
@@ -171,7 +171,7 @@ function Lobby() {
   }
 
   useEffect(() => {
-    const u = new Promise<Unsubscribe>((resolve, _) => {
+    const u = new Promise<Unsubscribe>((resolve) => {
       const userDoc = (
         doc(db, USERS, userID).withConverter(genericConverter<userT>())
       )

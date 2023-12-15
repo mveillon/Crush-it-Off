@@ -1,0 +1,18 @@
+.email-input {
+  padding: 2vw;
+  border: 1px solid var(--text-color);
+  background-color: var(--secondary-color);
+  border-radius: 5vw;
+  margin-bottom: 10vh;
+  width: fit-content;
+  padding-left: 10vw;
+  padding-right: 10vw;
+  padding: 5vw 10vw 5vw 10vw;
+}
+
+.email-box {
+  display: block;
+  min-width: 20vw;
+  margin-top: 3vh;
+  margin-bottom: 3vh;
+}
