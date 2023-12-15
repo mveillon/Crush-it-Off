@@ -26,7 +26,7 @@ function Header() {
     <div className="header">
       <img className="logo" src={logo} alt="logo" onClick={toHome} />
 
-      <h1>CRUSHERS</h1>
+      <h1>CRUSH IT OFF</h1>
 
       <div className="hamburger-div">
         <img 
