@@ -61,7 +61,7 @@ function CreateAccount(props: { state: any }) {
     <div>
       <form className="email-input" onSubmit={createUser}>
         <h2>
-          New to Crushers? Sign up: 
+          New to Crush if Off? Sign up: 
         </h2>
 
         <label>Enter your email: 

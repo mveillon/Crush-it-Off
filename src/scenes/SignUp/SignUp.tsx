@@ -19,7 +19,7 @@ function SignUp() {
     <div>
       <Header />
       <div className="content">
-        <h1 className="title">Sign up to use Crushers</h1>
+        <h1 className="title">Sign up to use Crush it Off</h1>
 
         <div className="sign-up">
           <CreateAccount state={state} />
