@@ -25,7 +25,7 @@ function Login(props: { redirectBack: string, state: any }) {
       localStorage.setItem("userID", user.uid)
       navigate(
         props.redirectBack,
-        { state: props. state }
+        { state: props.state }
       )
     }).catch(error => {
       setPassMismatch(true)
