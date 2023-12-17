@@ -22,11 +22,11 @@ function Home() {
 
         <div className="explanation">
           <p>
-            Gather your friends together and have them join the lobby you create. Everyone will secretly select who they have a crush on. 
+            Gather your friends together and have them join the lobby you create. Everyone will secretly select who they would want to go on a date with. 
           </p>
 
           <p>
-            If your crush selects you, you two will match and you can do with that information what you will 😏
+            If the person you select also selects you, the two of you will match and you can do with that information what you will 😏
           </p>
 
           <p>
