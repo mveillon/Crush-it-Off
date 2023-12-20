@@ -1,0 +1,12 @@
+.explanation {
+  margin-left: 5vw;
+  margin-top: 0;
+}
+
+.example-img {
+  width: 50vw;
+  box-shadow: 
+    1vw 1vw 3vw var(--accent-color),
+    2vw 2vw 3vw var(--text-color);
+  margin-bottom: 2vh;
+}

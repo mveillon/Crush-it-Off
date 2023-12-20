@@ -274,7 +274,7 @@ function Lobby() {
             }
           </div>
 
-          <button onClick={submitCrushes}>Submit Crushes</button>
+          <button onClick={submitCrushes}>Submit Selections</button>
         </div>
       </div>
     </div>

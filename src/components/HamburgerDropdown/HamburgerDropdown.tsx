@@ -16,12 +16,14 @@ function HamburgerDropdown(props: { style: {display: string }}) {
 
   const signUserOut = () => {
     const auth = getAuth()
-    signOut(auth).then(() => {
-      navigate(
-        "/sign-up",
-        { state: { redirectBack: "/home" } }
-      )
-    })
+    signOut(auth)
+      .then(() => {
+        navigate(
+          "/sign-up",
+          { state: { redirectBack: "/home" } }
+        )
+      })
+      .catch(_ => {})
   }
 
   return (

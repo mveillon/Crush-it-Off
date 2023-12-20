@@ -1,5 +1,6 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
 import CheckLoggedIn from "../../firebase/CheckLoggedIn";
 import Header from "../../components/Header/Header";
 import NewLobby from "../../components/NewLobby/NewLobby";
@@ -30,7 +31,8 @@ function Home() {
           </p>
 
           <p>
-            If they don't select you, no one will know but you, and you can keep going as if nothing ever happened.
+            If they don't select you, no one will know but you, and you can keep going as if nothing ever happened. Confused? 
+            <Link to="/explanation" className="inline-link">Read more.</Link>
           </p>
         </div>
       </div>

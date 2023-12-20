@@ -8,6 +8,7 @@ import Matches from './scenes/Matches/Matches';
 import WaitingRoom from './scenes/WaitingRoom/WaitingRoom';
 import SignUp from './scenes/SignUp/SignUp';
 import ResetPassword from './scenes/ResetPassword/ResetPassword';
+import Explanation from './scenes/Explanation/Explanation';
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
         <Route path="/sign-up" element={<SignUp />} />
 
         <Route path="/reset-password" element={<ResetPassword />} />
+
+        <Route path="/explanation" element={<Explanation />} />
       </Routes>
     </BrowserRouter>
   )
