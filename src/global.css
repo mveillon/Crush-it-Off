@@ -16,7 +16,8 @@ h1 {
   label, 
   button, 
   input, 
-  select {
+  select,
+  span {
     font-size: 1rem;
   }
 
@@ -35,7 +36,8 @@ h1 {
   label, 
   button, 
   input, 
-  select {
+  select,
+  span {
     font-size: 1.5rem;
   }
 
@@ -57,7 +59,7 @@ body {
   color: var(--text-color);
 }
 
-button, input, h1, h2, p, label, select {
+button, input, h1, h2, p, label, select, span {
   font-family: 'Montserrat Alternates', sans-serif;
   color: var(--text-color)
 }
@@ -91,7 +93,10 @@ option {
   color: var(--text-color);
 }
 
-input[type=text], input[type=password], input[type=email], input[type=number] {
+input[type=text], 
+input[type=password], 
+input[type=email], 
+input[type=number] {
   border-radius: 1vw;
   border-color: var(--text-color);
   padding: 0.75vw;

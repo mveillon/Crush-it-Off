@@ -8,6 +8,7 @@ import JoinLobby from "../../components/JoinLobby/JoinLobby";
 
 import "../../global.css"
 import "./home.css"
+import Collapsible from "../../components/Collapsible/Collapsible";
 
 function Home() {
   return (
@@ -21,19 +22,21 @@ function Home() {
           <JoinLobby />
         </div>
 
-        <div className="explanation">
-          <p>
-            Gather your friends together and have them join the lobby you create. Everyone will secretly select who they would want to go on a date with. 
-          </p>
+        <div className="home-info">
+          <Collapsible title="How Does it Work?">
+            <p>
+              Gather your friends together and have them join the lobby you create. Everyone will secretly select who they would want to go on a date with. 
+            </p>
 
-          <p>
-            If the person you select also selects you, the two of you will match and you can do with that information what you will 😏
-          </p>
+            <p>
+              If the person you select also selects you, the two of you will match and you can do with that information what you will 😏
+            </p>
 
-          <p>
-            If they don't select you, no one will know but you, and you can keep going as if nothing ever happened. Confused? 
-            <Link to="/explanation" className="inline-link">Read more.</Link>
-          </p>
+            <p>
+              If they don't select you, no one will know but you, and you can keep going as if nothing ever happened. Confused? 
+              <Link to="/explanation" className="inline-link">Read more.</Link>
+            </p>
+          </Collapsible>
         </div>
       </div>
     </div>

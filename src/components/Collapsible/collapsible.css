@@ -1,0 +1,19 @@
+.expand-button {
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background-color: var(--secondary-color);
+  margin-bottom: 0;
+}
+
+.expand-button:hover {
+  background-color: rgba(159, 69, 65, 0.25);
+}
+
+.collapsible {
+  border: 2px solid var(--text-color);
+}

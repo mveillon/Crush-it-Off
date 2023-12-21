@@ -7,11 +7,10 @@
   width: 100%;
 }
 
-.explanation {
-  margin-top: 10vh;
-  padding-left: 15vw;
-  padding-right: 15vw;
-  font-weight: 400;
+.home-info {
+  margin-top: 5vh;
+  padding: 0vh 10vw 0vh 10vw;
+  text-align: center;
 }
 
 .inline-link {
