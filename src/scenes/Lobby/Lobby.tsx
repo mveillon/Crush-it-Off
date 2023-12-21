@@ -45,16 +45,24 @@ function Lobby() {
     name: string, 
     checked: boolean,
     pfp: string,
-    gender: string
+    gender: string,
+    preferences: boolean[]
   }
 
   const [allMembers, setAllMembers] = useState<{ [index: string]: member }>({})
   const [userData, setUserData] = useState<userT | undefined>(undefined)
   const userID = useMemo(() => getUserID(), [])
 
-  // could u be attracted to someone of gender
-  const attracted = (u: userT, gender: string): boolean => {
-    return u.preferences[GENDER_MAP[gender]]
+  // could u be attracted to the user with uid otherID
+  const attracted = (u: userT, otherID: string): boolean => {
+    if (!(otherID in allMembers)) {
+      throw new Error(`Cannot find user ${otherID} in lobby ${lobbyID}`)
+    }
+    
+    const otherMember = allMembers[otherID]
+    const uToO = u.preferences[GENDER_MAP[otherMember.gender]]
+    const oToU = otherMember.preferences[GENDER_MAP[u.gender]]
+    return uToO && oToU
   }
 
   const getMemberData = async (memberID: string): Promise<member> => {
@@ -74,7 +82,8 @@ function Lobby() {
         name: memberData.name,
         gender: memberData.gender,
         checked: false,
-        pfp: url
+        pfp: url,
+        preferences: memberData.preferences
       }
 
       return toAdd
@@ -155,7 +164,8 @@ function Lobby() {
                 name: memberData.name,
                 gender: memberData.gender,
                 checked: false,
-                pfp: url
+                pfp: url,
+                preferences: memberData.preferences
               }
               resolve(toAdd)
             })
@@ -253,7 +263,7 @@ function Lobby() {
               Object.keys(allMembers)
                 .filter(uid => (
                   uid !== userID && 
-                  attracted(userData, allMembers[uid].gender)
+                  attracted(userData, uid)
                 ))
                 .sort((uid1, uid2) => {
                   const name1 = allMembers[uid1].name
