@@ -120,29 +120,28 @@ function WaitingRoom() {
       <CheckLoggedIn redirectBack="/waiting-room" state={location.state} />
       <Header />
 
-      <div className="content">
-        <h1 className="title">
-          Lobby {lobbyID} is waiting for submissions from:
-        </h1>
 
-        <div className="waiting-names">
-          {
-            Object.keys(members)
-              .filter(uid => !members[uid].submitted)
-              .sort((uid1, uid2) => {
-                const name1 = members[uid1].name
-                const name2 = members[uid2].name
-                if (name1 < name2) return -1
-                if (name1 > name2) return 1
-                return 0
-              })
-              .map(uid => {
-                return (
-                  <p key={uid}>{members[uid].name}</p>
-                )
-              })
-          }
-        </div>
+      <h1 className="title waiting-room-title">
+        Lobby {lobbyID} is waiting for submissions from:
+      </h1>
+
+      <div className="content">
+        {
+          Object.keys(members)
+            .filter(uid => !members[uid].submitted)
+            .sort((uid1, uid2) => {
+              const name1 = members[uid1].name
+              const name2 = members[uid2].name
+              if (name1 < name2) return -1
+              if (name1 > name2) return 1
+              return 0
+            })
+            .map(uid => {
+              return (
+                <p key={uid}>{members[uid].name}</p>
+              )
+            })
+        }
       </div>
     </div>
   )

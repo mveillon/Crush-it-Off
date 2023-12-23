@@ -117,3 +117,7 @@ input[type=number] {
   display: block;
   margin-bottom: 2vh;
 }
+
+.content {
+  margin-left: 5vw;
+}

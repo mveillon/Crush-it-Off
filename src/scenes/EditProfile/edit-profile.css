@@ -3,10 +3,6 @@ label {
   margin-bottom: 2vh;
 }
 
-.edit-profile {
-  margin-left: 5vw;
-}
-
 .pfp-input {
   background-color: var(--secondary-color);
 }

@@ -166,83 +166,81 @@ function EditProfile() {
     <div>
       <Header />
 
+      <h1 className="title">
+        We just need to gather some information about you
+      </h1>
+
       <div className="content">
-        <h1 className="title">
-          We just need to gather some information about you
-        </h1>
-
-        <div className="edit-profile">
-          <form>
-            <label>Enter your name:
-              <input
-                type="text"
-                value={user.name}
-                onChange={(e) => changeName(e.target.value)}
-              />
-            </label>
-
-            <label>Upload a picture of yourself (optional):
-              <input
-                type="file"
-                accept="image/*"
-                onChange={uploadPFP}
-                className="pfp-input"
-              />
-            </label>
-            <img 
-              src={pfpURL}
-              className="lobby-pfp" 
-              alt="Your profile"
+        <form>
+          <label>Enter your name:
+            <input
+              type="text"
+              value={user.name}
+              onChange={(e) => changeName(e.target.value)}
             />
+          </label>
 
-            <label className="gender-ident">Select your gender identity:
-              <select 
-                onChange={(e) => changeGender(e.target.value)}
-                className="gender-select"
-                value={user.gender}
-              >
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Non-Binary">Non-Binary</option>
-                <option value="Gender Fluid">Gender Fluid</option>
-                <option value="Prefer not to say">Prefer Not to Say</option>
-              </select>
+          <label>Upload a picture of yourself (optional):
+            <input
+              type="file"
+              accept="image/*"
+              onChange={uploadPFP}
+              className="pfp-input"
+            />
+          </label>
+          <img 
+            src={pfpURL}
+            className="lobby-pfp" 
+            alt="Your profile"
+          />
+
+          <label className="gender-ident">Select your gender identity:
+            <select 
+              onChange={(e) => changeGender(e.target.value)}
+              className="gender-select"
+              value={user.gender}
+            >
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Non-Binary">Non-Binary</option>
+              <option value="Gender Fluid">Gender Fluid</option>
+              <option value="Prefer not to say">Prefer Not to Say</option>
+            </select>
+          </label>
+
+          <label className="prefs">Select your dating preferences:
+            <label>Male
+              <input
+                type="checkbox"
+                checked={user.preferences[0]}
+                onChange={(e) => togglePref("Male")}
+              />
             </label>
 
-            <label className="prefs">Select your dating preferences:
-              <label>Male
-                <input
-                  type="checkbox"
-                  checked={user.preferences[0]}
-                  onChange={(e) => togglePref("Male")}
-                />
-              </label>
-
-              <label>Female
-                <input
-                  type="checkbox"
-                  checked={user.preferences[1]}
-                  onChange={(e) => togglePref("Female")}
-                />
-              </label>
-
-              <label>Non-Binary
-                <input
-                  type="checkbox"
-                  checked={user.preferences[2]}
-                  onChange={(e) => togglePref("Non-Binary")}
-                />
-              </label>
+            <label>Female
+              <input
+                type="checkbox"
+                checked={user.preferences[1]}
+                onChange={(e) => togglePref("Female")}
+              />
             </label>
-          </form>
 
-          <button onClick={saveChanges}>Save Changes</button>
+            <label>Non-Binary
+              <input
+                type="checkbox"
+                checked={user.preferences[2]}
+                onChange={(e) => togglePref("Non-Binary")}
+              />
+            </label>
+          </label>
+        </form>
 
-          {
-            invalidInput &&
-            <h2>Please make sure you've inputted something for every field!</h2>
-          }
-        </div>
+        <button onClick={saveChanges}>Save Changes</button>
+
+        {
+          invalidInput &&
+          <h2>Please make sure you've inputted something for every field!</h2>
+        }
       </div>
     </div>
   )

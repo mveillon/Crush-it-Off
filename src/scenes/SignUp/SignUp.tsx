@@ -18,14 +18,12 @@ function SignUp() {
   return (
     <div>
       <Header />
-      <div className="content">
-        <h1 className="title">Sign up to use Crush it Off</h1>
+      <h1 className="title">Sign up to use Crush it Off</h1>
 
-        <div className="sign-up">
-          <CreateAccount state={state} />
+      <div className="content sign-up">
+        <CreateAccount state={state} />
 
-          <Login redirectBack={redirectBack} state={state} />
-        </div>
+        <Login redirectBack={redirectBack} state={state} />
       </div>
     </div>
   )

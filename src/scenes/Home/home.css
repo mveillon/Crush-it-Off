@@ -5,12 +5,14 @@
   justify-content: space-evenly;
   align-items: center;
   width: 100%;
+  margin-right: 5vw;
 }
 
 .home-info {
   margin-top: 5vh;
   padding: 0vh 10vw 0vh 10vw;
   text-align: center;
+  margin-right: 5vw;
 }
 
 .inline-link {

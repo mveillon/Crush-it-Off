@@ -13,16 +13,14 @@ function PageNotFound() {
     <div>
       <Header />
 
+      <h1 className="title">How Did You Get Here?</h1>
+
       <div className="content">
-        <h1 className="title">How Did You Get Here?</h1>
+        <p>
+          Page not found. Push this button to go back to the home page.
+        </p>
 
-        <div className="page-not-found">
-          <p>
-            Page not found. Push this button to go back to the home page.
-          </p>
-
-          <button onClick={() => { navigate("/") }}>Go Home</button>
-        </div>
+        <button onClick={() => { navigate("/") }}>Go Home</button>
       </div>
     </div>
   )

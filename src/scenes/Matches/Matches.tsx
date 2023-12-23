@@ -100,25 +100,23 @@ function Matches() {
       <CheckLoggedIn redirectBack="/matches" />
       <Header />
 
+      <h1 className="title">Your matches:</h1>
+
       <div className="content">
-        <h1 className="title">Your matches:</h1>
+        {
+          matches.map((name, i) => {
+            return (
+              <Match name={name} key={i} />
+            )
+          })
+        }
 
-        <div className="matches">
-          {
-            matches.map((name, i) => {
-              return (
-                <Match name={name} key={i} />
-              )
-            })
-          }
-
-          {
-            doneQuerying &&
-            <h2 className="num-matches">
-              {numMatches()}
-            </h2>
-          }
-        </div>
+        {
+          doneQuerying &&
+          <h2 className="num-matches">
+            {numMatches()}
+          </h2>
+        }
       </div>
     </div>
   )

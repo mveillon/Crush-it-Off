@@ -252,40 +252,38 @@ function Lobby() {
       <CheckLoggedIn redirectBack="/lobby" state={location.state} />
       <Header />
 
-      <div className="content">
-        <h1 className="title">{`Enter code ${lobbyID} to join lobby!`}</h1>
-        
-        <div className="lobby">
-          <h2>Check off the names you would go on a date with: </h2>
-          <div className="names">
-            {
-              typeof userData !== "undefined" &&
-              Object.keys(allMembers)
-                .filter(uid => (
-                  uid !== userID && 
-                  attracted(userData, uid)
-                ))
-                .sort((uid1, uid2) => {
-                  const name1 = allMembers[uid1].name
-                  const name2 = allMembers[uid2].name
-                  if (name1 < name2) return -1
-                  if (name1 > name2) return 1
-                  return 0
-                })
-                .map(uid => (
-                  <MemberCard
-                    name={allMembers[uid].name}
-                    pfpUrl={allMembers[uid].pfp}
-                    checked={allMembers[uid].checked}
-                    onCheck={() => toggleChecked(uid)}
-                    key={uid}
-                  />
-                ))
-            }
-          </div>
+      <h1 className="title">{`Enter code ${lobbyID} to join lobby!`}</h1>
 
-          <button onClick={submitCrushes}>Submit Selections</button>
+      <div className="content">
+        <h2>Check off the names you would go on a date with: </h2>
+        <div className="names">
+          {
+            typeof userData !== "undefined" &&
+            Object.keys(allMembers)
+              .filter(uid => (
+                uid !== userID && 
+                attracted(userData, uid)
+              ))
+              .sort((uid1, uid2) => {
+                const name1 = allMembers[uid1].name
+                const name2 = allMembers[uid2].name
+                if (name1 < name2) return -1
+                if (name1 > name2) return 1
+                return 0
+              })
+              .map(uid => (
+                <MemberCard
+                  name={allMembers[uid].name}
+                  pfpUrl={allMembers[uid].pfp}
+                  checked={allMembers[uid].checked}
+                  onCheck={() => toggleChecked(uid)}
+                  key={uid}
+                />
+              ))
+          }
         </div>
+
+        <button onClick={submitCrushes}>Submit Selections</button>
       </div>
     </div>
   )

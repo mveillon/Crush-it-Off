@@ -28,29 +28,26 @@ function ResetPassword() {
   return (
     <div>
       <Header />
+      <h1 className="title">Reset Your Password</h1>
 
       <div className="content">
-        <h1 className="title">Reset Your Password</h1>
+        <form onSubmit={sendEmail}>
+          <label>Enter your email:
+            <input
+              type="email"
+              value={email}
+              onChange={e => { setEmail(e.target.value)} }
+              autoFocus={true}
+            />
+          </label>
 
-        <div className="reset-password">
-          <form onSubmit={sendEmail}>
-            <label>Enter your email:
-              <input
-                type="email"
-                value={email}
-                onChange={e => { setEmail(e.target.value)} }
-                autoFocus={true}
-              />
-            </label>
+          <input type="submit" value="Send password reset email" />
+        </form>
 
-            <input type="submit" value="Send password reset email" />
-          </form>
-
-          {
-            invalid &&
-            <p>Please input a vaild email</p>
-          }
-        </div>
+        {
+          invalid &&
+          <p>Please input a vaild email</p>
+        }
       </div>
     </div>
   )
