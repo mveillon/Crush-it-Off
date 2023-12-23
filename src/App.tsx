@@ -9,6 +9,7 @@ import WaitingRoom from './scenes/WaitingRoom/WaitingRoom';
 import SignUp from './scenes/SignUp/SignUp';
 import ResetPassword from './scenes/ResetPassword/ResetPassword';
 import Explanation from './scenes/Explanation/Explanation';
+import PageNotFound from './scenes/PageNotFound/PageNotFound';
 
 function App() {
   return (
@@ -31,6 +32,8 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route path="/explanation" element={<Explanation />} />
+
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>
   )

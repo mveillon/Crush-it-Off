@@ -35,7 +35,11 @@ function Explanation() {
           </p>
 
           <p>
-            Once everyone's in the lobby, it should look something like this.
+            One thing that makes Crush it Off different from other dating apps is that you will NOT see any strangers. Only people who have your lobby code (i.e. the friends you share it with) will be in the lobby.
+          </p>
+
+          <p>
+            Once everyone's in the lobby, it should look something like this. 
           </p>
 
           <img
