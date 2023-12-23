@@ -5,10 +5,10 @@ import CheckLoggedIn from "../../firebase/CheckLoggedIn";
 import Header from "../../components/Header/Header";
 import NewLobby from "../../components/NewLobby/NewLobby";
 import JoinLobby from "../../components/JoinLobby/JoinLobby";
+import Collapsible from "../../components/Collapsible/Collapsible";
 
 import "../../global.css"
 import "./home.css"
-import Collapsible from "../../components/Collapsible/Collapsible";
 
 function Home() {
   return (

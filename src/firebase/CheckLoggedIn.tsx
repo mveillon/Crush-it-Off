@@ -33,7 +33,7 @@ function CheckLoggedIn(props: {
           if (snapshot.exists()) {
             // user is already in Firebase so we're chilling
           } else {
-            // need to check if any users in the DB have the same phone
+            // need to check if any users in the DB have the same email
             const userColl = (
               collection(db, USERS).withConverter(genericConverter<userT>())
             )

@@ -13,7 +13,11 @@ function MemberCard(props: {
 }) {
   return (
     <div className="member-card">
-      <img src={props.pfpUrl} className="lobby-pfp" />
+      <img 
+        src={props.pfpUrl} 
+        className="lobby-pfp" 
+        alt={`${props.name}'s profile`} 
+      />
       
       <p>{props.name}</p>
 

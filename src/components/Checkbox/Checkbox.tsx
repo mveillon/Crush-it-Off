@@ -23,6 +23,7 @@ function Checkbox(props: {checked: boolean, onClick: () => void}) {
       src={imgSrc()}
       className="checkbox"
       onClick={clickBox}
+      alt='checkbox'
     />
   )
 }

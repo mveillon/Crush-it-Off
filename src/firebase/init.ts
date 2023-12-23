@@ -3,10 +3,6 @@ import { initializeApp } from "firebase/app";
 import { Analytics, getAnalytics } from "firebase/analytics";
 import { getFirestore, Firestore } from "firebase/firestore"
 
-export const baseURL = (): string => {
-  return "crushers-b9b59.firebaseapp.com"
-}
-
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -14,7 +10,7 @@ export const baseURL = (): string => {
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyDWsmE1ga0FlZMYKYQTXkPUkFaUyFJQ7zA",
-  authDomain: baseURL(),
+  authDomain: "crushers-b9b59.firebaseapp.com",
   databaseURL: "https://crushers-b9b59-default-rtdb.firebaseio.com",
   projectId: "crushers-b9b59",
   storageBucket: "crushers-b9b59.appspot.com",
