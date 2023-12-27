@@ -26,11 +26,11 @@ function Explanation() {
         </p>
 
         <p>
-          Whatever it is, Crush it Off is designed to avoid all of that while still finding out whether the person you're interested in likes you back.
+          Whatever it is, Crush it Off is designed to avoid it while still finding out whether the person you're interested in likes you back.
         </p>
 
         <p>
-          So how do you use it? First, get everything set up by having everyone make a profile and join your lobby.
+          So how do you use it? First, get your friends set up by having everyone make a profile and join your lobby.
         </p>
 
         <p>
